@@ -1,0 +1,111 @@
+@import "./style/val.scss";
+
+@import "~taro-ui/dist/style/index.scss";
+
+// @import "~taro-ui/dist/style/components/modal.scss";
+// @import "~taro-ui/dist/style/components/action-sheet.scss";
+// @import "~taro-ui/dist/style/components/fab.scss";
+
+
+
+page {
+  color: #444;
+  background: #f5f5f5;
+}
+
+.container {
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.content-wrap {
+  padding: 32px;
+}
+
+.active {
+  color: $primary;
+}
+
+.text-overflow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 12px;
+  vertical-align: middle;
+  margin-right: 16px;
+  color: #909090;
+  font-size: 24px;
+  background: #f5f5f5;
+  border-radius: 6px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.more {
+  width: 100%;
+  padding: 16px 0;
+  margin-top: 24px;
+  margin-bottom: 32px;
+  font-size: 12PX;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.3);
+
+  .at-activity-indicator {
+    justify-content: center;
+  }
+}
+
+.flex {
+  display: flex;
+
+  &.flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  &.align-top {
+    align-items: flex-start;
+  }
+
+  &.align-bottom {
+    align-items: flex-end;
+  }
+
+  &.align-stretch {
+    align-items: stretch;
+  }
+
+  &.align-middle {
+    align-items: center !important;
+  }
+
+  &.content-center {
+    justify-content: center;
+  }
+
+  &.content-justify {
+    justify-content: space-between;
+  }
+
+  &.content-around {
+    justify-content: space-around;
+  }
+
+  &.direction-column {
+    flex-direction: column;
+  }
+}
+
+.flex-box {
+  flex: 1;
+}
+
+.font-red {
+  color: $red;
+}

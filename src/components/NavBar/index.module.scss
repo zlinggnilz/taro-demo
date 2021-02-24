@@ -1,0 +1,44 @@
+
+@import '~@/style/val.scss' ;
+
+.bar { box-sizing: border-box;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 16PX;
+  background: #fff;
+  // @include hairline-bottom();
+  position: fixed;
+  z-index: 99;
+
+  &.border{ border-bottom: 1px solid rgba(0,0,0,0.2);}
+
+  > view {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  // &.noBorder{
+  //   &::after {
+  //     border-bottom-width: 0;
+  //   }
+  // }
+  :global{
+    .nav-left-icon{ font-size: 20PX;}
+  }
+}
+.left {
+
+  text-align: left;
+}
+.title {
+  flex: 1;
+  text-align: center;
+}
+.right {
+
+  text-align: right;
+}

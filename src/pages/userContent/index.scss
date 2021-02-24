@@ -1,0 +1,21 @@
+.waterFall {
+  padding: 32px;
+  grid-template-columns: repeat(2, 1fr); // 指定两列，自动宽度
+  grid-gap: 16px; // 横向，纵向间隔
+  grid-auto-flow: row dense; // 是否自动补齐空白
+  grid-auto-rows: 20PX; // base高度，grid-row基于此运算
+  margin-right: 16px;
+}
+
+.waterFallItem {
+  width: 50%;
+  padding: 10PX;
+  box-sizing: border-box;
+  border-radius: 8px;
+  font-size: 24px;
+  background: #fff;
+  background: 0 0 16rpx rgba(0,0,0,0.2);
+  opacity: 0;
+
+  &.waterFallItemactive{ width: 100%; opacity: 1;}
+}

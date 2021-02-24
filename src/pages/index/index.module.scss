@@ -1,0 +1,87 @@
+@import '~@/style/val.scss';
+
+
+
+
+.replyWrap {
+  margin-left: 72px;
+  background: #f8f8f8;
+  padding: 24px 24px 16px 24px;
+  overflow: hidden;
+}
+
+.replyMore {
+  display: inline-block;
+  font-size: 28rpx;
+  color: darken($color: $primary, $amount: 10%);
+  margin-top:-8px;
+}
+.commentList {
+  min-height: 798px;
+  padding: 0 14px 100px 0;
+  margin-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+.commentSub {
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+.commitWrap{ position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24px;
+  background: #fff;
+  overflow: hidden;
+  .commitAvatar , .commitBtn, .commitInput{ margin-bottom: env(safe-area-inset-bottom);}
+}
+.commitAvatar {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.commitBtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  margin-left: 24px;
+  color: #fff; border-radius: 6px;
+  background: $primary;
+}
+
+.actionItem {
+  height: 80PX;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  button {
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.actionSheet {
+  :global {
+    .at-action-sheet__body {
+      display: flex;
+    }
+
+    .at-action-sheet__item {
+      flex: 1;
+    }
+
+    .at-icon {
+      margin-right: 16px;
+    }
+  }
+
+}

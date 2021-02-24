@@ -51,10 +51,10 @@ npm run build:weapp
 
 - 遍历的数组列表，尽量不要编写复杂的组件。
   > 复杂的组件：包含多个小组件。  
-  > 遍历成列表的时候，用到组件都会被遍历生成 wxml 放在小程序页面中，导致页面内容过多，可能造成卡顿。通用的组件，保证页面上总是只有一个。
+  > 遍历成列表的时候，用到组件都会被遍历生成 wxml 放在小程序页面中，导致页面内容过多，可能造成卡顿。
 
-- 页面中的 CSS className 可以不用 css module, 但组件要用 css module, 或者组件 class 取名的时候都取特定的名称。
-  > 打包出来的文件，页面的跟小程序一样，组件是放在一个文件中的，所以 class 名称一定要区分开。
+- 页面中的 CSS className 可以不用 css module, 但组件要用 css module, 或者组件 class 都取特定的名称。
+  > 打包出来的文件，页面结构的跟小程序一样，但**组件是放在一个文件中的**，所以组件的 class 名称一定要区分开。
 
 - CSS 单位，使用 px, Taro 编译的时候会转成 rpx, 默认以 750 的设计稿为准。
   > css 单位通常按照设计稿写 px 即可。不需要转成 rpx 的地方写成大写的 `PX`。  
@@ -69,12 +69,14 @@ https://cn.mobx.js.org/
 
 常用API
 
-- @observable 可观察的状态值
-- @action  修改状态
+- @observable  可观察的状态值
+- @action      修改状态
 - runInAction  异步回调修改状态
-- flow     使用生成器函数, 不需要写 action 和 runInAction
-- @computed 根据现有的状态或其它计算值衍生出的值
+- flow         使用生成器函数, 不需要写 action 和 runInAction
+- @computed    根据现有的状态或其它计算值衍生出的值。需返回新值。
+- autorun      （不常用）与computed类似，但不产生新的值
 
+---
 
 ## 组件示例
 

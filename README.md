@@ -4,6 +4,8 @@ yarn global add @tarojs/cli
 
 taro init myApp
 
+cd myApp
+
 yarn install
 ```
 
@@ -62,6 +64,27 @@ npm run build:weapp
 
 ---
 
+## 注意
+- 不使用点表示法使用组件
+  > 例: `<MyComponents.Item />`
+- 阻止冒泡，明确使用 `stopPropagation`
+
+## 多端开发
+https://taro-docs.jd.com/taro/docs/envs
+- 跨平台开发,内置环境变量 process.env.TARO_ENV
+```jsx
+if (process.env.TARO_ENV === 'weapp') {
+   require('path/to/weapp/name');
+} else if (process.env.TARO_ENV === 'h5') {
+   require('path/to/h5/name');
+}
+```
+- 统一接口的多端文件  
+  假如有一个 Test 组件存在微信小程序、百度小程序和 H5 三个不同版本，那么就可以像如下组织代码
+  - test.js 文件，这是 Test 组件默认的形式，编译到微信小程序、百度小程序和 H5 三端之外的端使用的版本
+  - test.h5.js 文件，这是 Test 组件的 H5 版本
+  - test.weapp.js 文件，这是 Test 组件的 微信小程序 版本
+  - test.swan.js 文件，这是 Test 组件的 百度小程序 版本
 
 ## MobX 状态管理
 

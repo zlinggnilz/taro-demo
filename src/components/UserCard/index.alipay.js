@@ -15,23 +15,14 @@ const UserCard = ({ globalStore }) => {
     <View
       className={style.user}
       style={{
-        width: headerBtnPosi.width,
-        height: headerBtnPosi.height,
-        borderRadius: headerBtnPosi.height / 2,
+        // width: headerBtnPosi.width,
+        // height: headerBtnPosi.height,
+        borderRadius:16,
+        padding:'4px 8px'
       }}
       onClick={handleClick}
     >
-      <View
-        className={style.avatar}
-        style={{
-          width: headerBtnPosi.height - 8,
-          height: headerBtnPosi.height - 8,
-        }}
-      >
-        <open-data type="userAvatarUrl"></open-data>
-      </View>
       <View className={style.name}>
-        <open-data type="userNickName"></open-data>
         个人中心
       </View>
     </View>

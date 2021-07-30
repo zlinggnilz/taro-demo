@@ -1,0 +1,17 @@
+{
+  "miniprogramRoot": "./dist/alipay",
+  "projectname": "ali-dd",
+  "description": "test",
+  "appid": "2021002161623430",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+
+  "compileType": "miniprogram",
+  "component2": true,
+  "axmlStrictCheck": true,
+  "enableAppxNg": true
+}

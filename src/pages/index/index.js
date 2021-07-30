@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState, createRef } from 'react';
-import { View, Button } from '@tarojs/components';
+import React, { useEffect, useCallback, useState, createRef, useMemo } from 'react';
+import { View, Button, Image } from '@tarojs/components';
 import { observer, inject } from 'mobx-react';
 import Taro, {
   useShareAppMessage,
@@ -11,7 +11,7 @@ import { AtFloatLayout, AtActionSheet, AtActionSheetItem, AtInput } from 'taro-u
 import ListMore from '@/components/ListMore';
 import List from '@/components/List';
 import NavBar from '@/components/NavBar';
-import UserCard from '@/components/UserCard';
+import UserCard from '@/components/UserCard/index';
 import DrawCanvas from '@/components/DrawCanvas';
 import PromiseAction from '@/components/PromiseAction';
 import Feed from '@/components/Feed';
@@ -20,7 +20,8 @@ import style from './index.module.scss';
 
 const Index = ({ contentStore, globalStore, userStore }) => {
   const { list, listState, commentList, commentListState } = contentStore;
-  const { userInfo } = userStore;
+
+  const {userInfo} = userStore
 
   const [commentVisible, setCommentVisible] = useState(false);
   const [shareVisible, setShareVisible] = useState(false);
@@ -32,8 +33,26 @@ const Index = ({ contentStore, globalStore, userStore }) => {
 
   const feedListRef = createRef();
 
+  const mt = useMemo(() => {
+    if (process.env.TARO_ENV === 'alipay') {
+      return globalStore.navHeight + globalStore.statusBarHeight;
+    }
+    if (process.env.TARO_ENV === 'weapp') {
+      return globalStore.navHeight;
+    }
+  }, []);
+
   useEffect(() => {
     // contentStore.fetchList({ start: 1, length: 20 });
+    // console.log(globalStore);
+    // if (process.env.TARO_ENV === 'alipay') {
+    //   my.setNavigationBar({
+    //     title: '首页alipay',
+    //     backgroundColor: '#ffffff',
+    //     // borderBottomColor,
+    //     image: 'https://gz.bcebos.com/v1/newretail/df3i/pyq-share.png',
+    //   });
+    // }
   }, []);
 
   useDidShow(() => {
@@ -49,11 +68,12 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     feedListRef.current.getList({ start: list[list.length - 1]['feedId'] });
   });
 
-  const handleCommentFetch = useCallback((data) => {
+  const handleCommentFetch = (data) => {
     setcurrentFeed(data);
     setCommentVisible(true);
+    const uid = userStore.userId;
     contentStore.fetchCommentList({
-      uid: userInfo.uid,
+      uid,
       feedId: data.feedId,
       start: 1,
       length: 20,
@@ -62,16 +82,16 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     setcurrentComment({
       toUid: data.uid,
       feedId: data.feedId,
-      fromUid: userInfo.uid,
+      fromUid: uid,
     });
-  }, []);
+  };
 
   const handleCommentClick = (data) => {
     setcurrentComment({
       toUid: data.fromUid || data.uid,
       feedId: data.feedId,
       commentId: data.commentId,
-      fromUid: userInfo.uid,
+      fromUid: userStore.userId,
       toReplyId: data.replyId,
       to: data.fromName || data.name,
     });
@@ -103,7 +123,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
       <Comment
         showAvatar
         data={record}
-        avatar={record.avatar}
+        avatar={record.avatar || record.fromAvatarUrl}
         key={record.feedId}
         onClick={handleCommentClick}
       ></Comment>
@@ -129,7 +149,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
             className={style.replyMore}
             onClick={() =>
               handleReplyMore({
-                uid: userInfo.uid,
+                uid: userStore.userId,
                 commentId: record.commentId,
                 start: record.replyList[record.replyList.length - 1],
                 length: 20,
@@ -207,7 +227,8 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     <>
       <NavBar title="首页" leftContent={<UserCard></UserCard>}></NavBar>
 
-      <View style={{ marginTop: globalStore.navHeight }} className="container">
+      <View style={{ marginTop: mt }} className="container">
+        {/* <View className="container"> */}
         <ListMore
           ref={feedListRef}
           dataSource={list}
@@ -228,9 +249,14 @@ const Index = ({ contentStore, globalStore, userStore }) => {
           <List renderItem={renderComment} dataSource={commentList} state={commentListState} />
         </View>
         <View className={`flex align-stretch ${style.commitWrap}`}>
-          <View className={style.commitAvatar}>
-            <open-data type="userAvatarUrl"></open-data>
-          </View>
+          {process.env.TARO_ENV === 'weapp' && (
+            <View className={style.commitAvatar}>
+              <open-data type="userAvatarUrl"></open-data>
+            </View>
+          )}
+          {process.env.TARO_ENV === 'alipay' && (
+            <Image src={userInfo.avatar} className={style.commitAvatar}></Image>
+          )}
           <View className={`flex-box ${style.commitInput}`}>
             <AtInput
               type="text"

@@ -1,4 +1,4 @@
-import { observable, action, flow, computed } from "mobx";
+import { observable, action, flow, computed } from 'mobx';
 // import request from "../utils/request";
 
 class Global {
@@ -10,8 +10,13 @@ class Global {
 
   @computed
   get navHeight() {
-    const { height = 0, top = 0 } = this.headerBtnPosi;
-    return (top - this.statusBarHeight) * 2 + height + this.statusBarHeight;
+    if(process.env.TARO_ENV === 'weapp'){
+      const { height = 0, top = 0 } = this.headerBtnPosi;
+      return (top - this.statusBarHeight) * 2 + height + this.statusBarHeight;
+    }
+    if(process.env.TARO_ENV === 'alipay'){
+      return this.systemInfo.titleBarHeight
+    }
   }
   @computed
   get navPadding() {
@@ -22,7 +27,7 @@ class Global {
   @action.bound
   setSysInfo(info) {
     info = info || {};
-    const { windowWidth = 0, windowHeight = 0, statusBarHeight = 0 } = info;
+    const { windowWidth = 0, windowHeight = 0, statusBarHeight = 0} = info;
     this.systemInfo = info;
     this.windowWidth = windowWidth;
     this.windowHeight = windowHeight;

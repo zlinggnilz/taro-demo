@@ -25,7 +25,7 @@ export const setLocal = (key, data) => {
 };
 
 export const getLocal = (key) => {
-  return (Taro.getStorageSync(key) || {}).data;
+  return Taro.getStorageSync(key);
 };
 
 export const removeLocal = (key) => {

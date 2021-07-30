@@ -10,5 +10,6 @@ export default {
     backgroundTextStyle: 'dark',
     navigationBarBackgroundColor: '#ffffff',
     navigationBarTextStyle: 'black',
-  }
-}
+    enableComponentOverlayer: 'YES',
+  },
+};

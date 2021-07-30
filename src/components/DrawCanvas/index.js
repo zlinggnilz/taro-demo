@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Image, Canvas } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
+// import { observer, inject } from 'mobx-react';
 import Taro from '@tarojs/taro';
-import logoImg from '@/assets/login.png';
-import base64src from '@/utils/base64';
+import qrimg from '@/assets/qr.png';
+// import base64src from '@/utils/base64';
 import { textByteLength } from '@/utils/utils';
 import style from './index.module.scss';
-import qrcode from './qrcode';
+// import qrcode from './qrcode';
 
-let baseUrlCode = '';
+// let baseUrlCode = '';
 const DrawCanvas = (props) => {
   const { isOpened, imageUrl, onCancel, data } = props;
 
@@ -17,11 +17,11 @@ const DrawCanvas = (props) => {
   const imgTempPath = useRef('');
   const [posterImage, setposterImage] = useState('');
 
-  useEffect(() => {
-    base64src(qrcode, (res) => {
-      baseUrlCode = res;
-    });
-  }, []);
+  // useEffect(() => {
+  //   base64src(qrcode, (res) => {
+  //     baseUrlCode = res;
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (!isOpened) {
@@ -42,9 +42,10 @@ const DrawCanvas = (props) => {
     return new Promise((resolve, reject) => {
       Taro.showLoading();
       Taro.downloadFile({
-        url: imageUrl,
+        // url: imageUrl,
+        url: 'https://img.alicdn.com/tfs/TB1x669SXXXXXbdaFXXXXXXXXXX-520-280.jpg',
         success: function (res) {
-          imgTempPath.current = res.tempFilePath;
+          imgTempPath.current = res.tempFilePath || res.apFilePath;
           Taro.hideLoading();
           resolve();
         },
@@ -60,76 +61,20 @@ const DrawCanvas = (props) => {
     });
   };
 
-  // 绘制图片
-  const wxDrawImage = () => {
-    return new Promise((resolve, reject) => {
-      try {
-        Taro.showLoading({ title: '图片生成中', mask: true });
-        const WIDTH = canvasInfo.width;
-        var ctx = Taro.createCanvasContext('shareCanvas');
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, WIDTH, canvasInfo.height);
-        ctx.clearRect(0, 0, 0, 0);
-        Taro.getImageInfo({ src: imgTempPath.current }).then((res) => {
-          // 获取图片的高度
-          const IMAGEHEIGHT = res.height;
-          const IMAGEWIDTH = res.width;
-
-          // ctx.drawImage(logoImg, (WIDTH - 300) / 2, 20, 300, 300);
-          // ctx.restore();
-
-          ctx.setFillStyle('#333333'); //  颜色
-          ctx.setFontSize(38);
-          let str1 = data.name;
-          let left1 = (WIDTH - ctx.measureText(str1).width) / 2;
-          ctx.fillText(str1, left1, 60 + 38); //字体加设计高度
-
-          // ctx.fillStyle = '#D8D8D8';
-          // ctx.fillRect(0, 152, WIDTH, 560);
-          // ctx.clearRect(0, 0, 0, 0);
-          const imgH = WIDTH;
-          const imgW = (IMAGEHEIGHT * imgH) / IMAGEWIDTH;
-
-          ctx.drawImage(
-            imgTempPath.current,
-            (WIDTH - imgW) / 2,
-            152 + (560 - imgH) / 2,
-            imgW,
-            imgH
-          );
-          ctx.restore();
-
-          let str2 = data.text;
-          let [contentLeng, contentArray, contentRows] = textByteLength(str2, 36);
-          let hs = contentRows * 48;
-          for (let m = 0; m < contentArray.length; m++) {
-            ctx.setFillStyle('#ffffff');
-            ctx.setTextAlign('left');
-            ctx.font = 'normal bold 28px sans-serif';
-            ctx.fillText(contentArray[m], 32, 152 + 52 + 48 * m);
-          }
-
-          // 图片转码
-          ctx.drawImage(baseUrlCode, WIDTH - 160 - 32, 754, 160, 160);
-          ctx.restore();
-
-          ctx.setFillStyle('#333333'); //  颜色
-          ctx.setFontSize(32);
-          let str4 = '长按识别二维码';
-          ctx.font = 'normal normal 26px sans-serif';
-          ctx.fillText(str4, 32, 754 + 80 + 16);
-
-          ctx.draw(true, resolve);
-        });
-      } catch (error) {
-        Taro.hideLoading();
-        reject();
-      }
-    });
-  };
-
   // 图片临时保存
   const saveTempImage = () => {
+    if (process.env.TARO_ENV === 'alipay') {
+      const CanvasContext = Taro.createCanvasContext('shareCanvas');
+      CanvasContext.toTempFilePath({
+        success(res) {
+          Taro.hideLoading();
+          setposterImage(res.apFilePath);
+        },
+      });
+
+      return;
+    }
+
     Taro.canvasToTempFilePath({
       width: canvasInfo.width,
       height: canvasInfo.height,
@@ -142,13 +87,78 @@ const DrawCanvas = (props) => {
         Taro.hideLoading();
         setposterImage(res.tempFilePath);
       },
+      fail: function (res) {
+        console.log('🚀 saveTempImage fail ~ res', res);
+      },
     });
+  };
+
+  // 绘制图片
+  const wxDrawImage = () => {
+    try {
+      Taro.showLoading({ title: '图片生成中', mask: true });
+      const WIDTH = canvasInfo.width;
+      const HEIGHT = canvasInfo.height;
+      const ctx = Taro.createCanvasContext('shareCanvas');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, WIDTH, canvasInfo.height);
+      ctx.clearRect(0, 0, 0, 0);
+      Taro.getImageInfo({ src: imgTempPath.current }).then((res) => {
+        // 获取图片的高度
+        const IMAGEHEIGHT = res.height;
+        const IMAGEWIDTH = res.width;
+
+        ctx.setFillStyle('#333333'); //  颜色
+        ctx.setFontSize(38);
+        let str1 = data.name;
+        let left1 = (WIDTH - ctx.measureText(str1).width) / 2;
+        ctx.fillText(str1, left1, 60 + 38); //字体加设计高度
+
+        // ctx.fillStyle = '#D8D8D8';
+        // ctx.fillRect(0, 152, WIDTH, 560);
+        // ctx.clearRect(0, 0, 0, 0);
+        const imgW = WIDTH;
+        const imgH = (IMAGEHEIGHT * imgW) / IMAGEWIDTH;
+
+        ctx.drawImage(imgTempPath.current, 0, 152, imgW, imgH);
+        ctx.restore();
+
+        let str2 = data.text;
+        let [contentLeng, contentArray, contentRows] = textByteLength(str2, 36);
+        let hs = contentRows * 48;
+        for (let m = 0; m < contentArray.length; m++) {
+          ctx.setFillStyle('#ffffff');
+          ctx.setTextAlign('left');
+          ctx.font = 'normal bold 28px sans-serif';
+          ctx.fillText(contentArray[m], 32, 152 + 52 + 48 * m);
+        }
+
+        // 图片转码
+        ctx.drawImage(qrimg, WIDTH - 160 - 32, 754, 160, 160);
+        ctx.restore();
+
+        ctx.setFillStyle('#333333'); //  颜色
+        ctx.setFontSize(32);
+        let str4 = '长按识别二维码';
+        ctx.font = 'normal normal 26px sans-serif';
+        ctx.fillText(str4, 32, 754 + 80 + 16);
+
+        ctx.draw(true, () => {
+          saveTempImage();
+        });
+      });
+    } catch (error) {
+      Taro.hideLoading();
+      Taro.showToast({
+        title: '生成图片失败',
+        icon: 'none',
+      });
+    }
   };
 
   const start = async () => {
     await downLoad();
-    await wxDrawImage();
-    saveTempImage();
+    wxDrawImage();
   };
 
   // 获取微信相册授权信息
@@ -156,6 +166,17 @@ const DrawCanvas = (props) => {
     return new Promise((resolve, reject) => {
       Taro.getSetting()
         .then((resp) => {
+
+          if (process.env.TARO_ENV === 'alipay') {
+            if (resp.authSetting['album']) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+
+            return;
+          }
+
           if (!resp.authSetting['scope.writePhotosAlbum']) {
             Taro.authorize({
               scope: 'scope.writePhotosAlbum',
@@ -235,8 +256,10 @@ const DrawCanvas = (props) => {
   };
 
   const saveToAlbum = async (e) => {
-    e.stopPropagation()
+    e.stopPropagation();
+
     const authResult = await getSetting();
+    console.log('🚀 ~ file: authResult >>> ', authResult);
     if (!authResult) {
       // await openAuthSetting()
       Taro.showToast({
@@ -277,12 +300,15 @@ const DrawCanvas = (props) => {
       {isOpened && (
         <Canvas
           canvasId="shareCanvas"
+          id="shareCanvas"
+          width={`${canvasInfo.width}`}
+          height={`${canvasInfo.height}`}
           style={{
             width: canvasInfo.width,
             height: canvasInfo.height,
             position: 'fixed',
             top: 0,
-            left: '1000px',
+            left: '10000px',
           }}
         ></Canvas>
       )}
@@ -306,7 +332,6 @@ const DrawCanvas = (props) => {
             </View>
             <View className={style.wrap}>
               <View className={`${style.btn} at-icon at-icon-download`} onClick={saveToAlbum}>
-                {' '}
                 保存
               </View>
             </View>

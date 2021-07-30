@@ -5,8 +5,8 @@ import request from '../utils/request';
 class User {
   // @observable isLogin = getLocal('userInfo')?true:false; // 缓存中是否有 access token
   @observable isLogin = true; // 缓存中是否有 access token
-  // @observable userInfo = getLocal('userInfo') || {};
-  @observable userInfo = { uid: '001', name: 'test name' };
+  @observable userInfo = getLocal('userInfo') || {};
+  // @observable userInfo = { uid: '001', name: 'test name' };
   @observable loginState = ''; // pending, done, error
   @observable list = [];
   @observable listState = ''; // pending, done, error
@@ -17,6 +17,11 @@ class User {
       return true;
     }
     return false;
+  }
+
+  @computed
+  get userId(){
+    return this.userInfo.uid
   }
 
   login = flow(
@@ -50,6 +55,14 @@ class User {
     this.userInfo = {};
     clearLocal(); // 清除缓存
     // 清除store数据
+  }
+
+  @action.bound
+  setUserInfo(info) {
+    info.name = info.nickName;
+    info.uid = '001';
+    this.userInfo = info;
+    setLocal('userInfo', info);
   }
 
   fetchList = flow(

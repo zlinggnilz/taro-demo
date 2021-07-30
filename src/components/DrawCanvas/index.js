@@ -42,8 +42,8 @@ const DrawCanvas = (props) => {
     return new Promise((resolve, reject) => {
       Taro.showLoading();
       Taro.downloadFile({
-        // url: imageUrl,
-        url: 'https://img.alicdn.com/tfs/TB1x669SXXXXXbdaFXXXXXXXXXX-520-280.jpg',
+        url: imageUrl,
+        // url: 'https://img.alicdn.com/tfs/TB1x669SXXXXXbdaFXXXXXXXXXX-520-280.jpg',
         success: function (res) {
           imgTempPath.current = res.tempFilePath || res.apFilePath;
           Taro.hideLoading();

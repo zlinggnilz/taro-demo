@@ -13,6 +13,7 @@ export default {
     navigationBarTextStyle: 'black',
     enableComponentOverlayer: 'YES',
   },
+  lazyCodeLoading: 'requiredComponents',
   tabBar: {
     custom: true,
     color: '#000000',

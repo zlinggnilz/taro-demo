@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useMemo } from 'react';
 import { View, Image } from '@tarojs/components';
 import { observer, inject } from 'mobx-react';
 import Taro, { getCurrentInstance } from '@tarojs/taro';
@@ -11,13 +11,22 @@ const Login = ({ userStore }) => {
 
   const currentInstance = getCurrentInstance();
 
+  const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
+
+
   const phoneCallback = () => {
     setTimeout(() => {
-      const redirect = currentInstance.router.params.redirect;
+      const params = currentInstance.router.params
+      const {redirect,type} = params;
       if (redirect) {
-        Taro.redirectTo({
-          url: redirect,
-        });
+        if(type === 'tab'){
+          const tabbar = Taro.getTabBar(pageCtx);
+          tabbar?.switchTab(redirect);
+        }else{
+          Taro.redirectTo({
+            url: redirect,
+          });
+        }
       } else {
         Taro.navigateBack();
       }

@@ -68,6 +68,7 @@ const config = {
   },
   alias: {
     '@': path.resolve(__dirname, '..', 'src'),
+    'taro-ui$':'taro-ui/lib/index'
   },
 }
 

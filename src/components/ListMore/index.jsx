@@ -1,4 +1,4 @@
-import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import { useState, useImperativeHandle, forwardRef } from 'react';
 import { View, Text } from '@tarojs/components';
 import { AtActivityIndicator } from 'taro-ui';
 import Loading from '../Loading';
@@ -21,24 +21,29 @@ const List = forwardRef((props, ref) => {
   const [listState, setListState] = useState('');
 
   const getList = (params={}) => {
-    const page = params.page;
+    const page = params.page || params.pageNo;
     let p = 1;
     if (page == null) {
       p = (pageData.page || 0) + 1;
     }
+    if(listState === 'finish' && page !== 1){
+      return
+    }
     if (p === 1) {
       setListState('pending');
     }
-    return fetchList({ length: pageSize, page: p, ...params })
+    return fetchList({ length: pageSize, page: p, pageNo:p, pageSize, ...params })
       .then((data) => {
-        if ( data.length == pageSize ) {
+        if ( p >= pageData.totalPage){
+          setListState('finish')
+        }else if (data && data.length == pageSize ) {
           setListState('done');
         } else {
           setListState('finish');
         }
       })
       .catch((error) => {
-        console.log("🚀 ~ file: index.js ~ line 41 ~ getList ~ error", error)
+        console.log("🚀 getList ~ error", error)
         setListState('error');
       });
   };

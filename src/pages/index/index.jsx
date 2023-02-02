@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState, createRef, useMemo } from 'react';
-import { View, Button, Image } from '@tarojs/components';
+import  { useCallback, useState, createRef, useMemo } from 'react';
+import { View, Button, Image,Input } from '@tarojs/components';
 import { observer, inject } from 'mobx-react';
 import Taro, {
   useShareAppMessage,
@@ -16,12 +16,15 @@ import DrawCanvas from '@/components/DrawCanvas';
 import PromiseAction from '@/components/PromiseAction';
 import Feed from '@/components/Feed';
 import Comment from '@/components/Comment';
+// import { feedImg } from '@/constant';
+import ContentImg from '@/assets/where.jpg';
 import style from './index.module.scss';
 
 const Index = ({ contentStore, globalStore, userStore }) => {
+
   const { list, listState, commentList, commentListState } = contentStore;
 
-  const {userInfo} = userStore
+  const { userInfo } = userStore;
 
   const [commentVisible, setCommentVisible] = useState(false);
   const [shareVisible, setShareVisible] = useState(false);
@@ -42,7 +45,15 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     }
   }, []);
 
-  useEffect(() => {
+  const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
+
+  useDidShow(() => {
+    feedListRef.current.getList({ start: -1, page: 1 });
+    const tabbar = Taro.getTabBar(pageCtx)
+    tabbar?.setSelected('home')
+  });
+
+  // useEffect(() => {
     // contentStore.fetchList({ start: 1, length: 20 });
     // console.log(globalStore);
     // if (process.env.TARO_ENV === 'alipay') {
@@ -53,11 +64,8 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     //     image: 'https://gz.bcebos.com/v1/newretail/df3i/pyq-share.png',
     //   });
     // }
-  }, []);
+  // }, []);
 
-  useDidShow(() => {
-    feedListRef.current.getList({ start: -1, page: 1 });
-  });
 
   usePullDownRefresh(() => {
     feedListRef.current.getList({ start: -1, page: 1 }).finally(() => {
@@ -192,7 +200,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
   }, []);
 
   const handleCommitValue = (v) => {
-    setcommitValue(v);
+    setcommitValue(v.detail.value);
   };
 
   const handleSendCommit = () => {
@@ -240,7 +248,6 @@ const Index = ({ contentStore, globalStore, userStore }) => {
         />
       </View>
       <AtFloatLayout
-        className={style.commentWrap}
         isOpened={commentVisible}
         title="评论"
         onClose={handleCommentVisible}
@@ -249,21 +256,15 @@ const Index = ({ contentStore, globalStore, userStore }) => {
           <List renderItem={renderComment} dataSource={commentList} state={commentListState} />
         </View>
         <View className={`flex align-stretch ${style.commitWrap}`}>
-          {process.env.TARO_ENV === 'weapp' && (
-            <View className={style.commitAvatar}>
-              <open-data type="userAvatarUrl"></open-data>
-            </View>
-          )}
-          {process.env.TARO_ENV === 'alipay' && (
-            <Image src={userInfo.avatar} className={style.commitAvatar}></Image>
-          )}
-          <View className={`flex-box ${style.commitInput}`}>
-            <AtInput
-              type="text"
+          <Image src={userInfo.avatar} className={style.commitAvatar}></Image>
+          <View className={`flex-box ${style.commitInputWrap}`}>
+            <Input className={style.commitInput}
+              type='text'
               placeholder={`评论${currentComment.to ? '@' + currentComment.to : ''}`}
+              placeholderStyle='color:#888'
               value={commitValue}
-              onChange={handleCommitValue}
-            ></AtInput>
+              onInput={handleCommitValue}
+            />
           </View>
           <PromiseAction onClick={handleSendCommit} className={style.commitBtn} color="white">
             发送
@@ -279,7 +280,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
         >
           <AtActionSheetItem className={style.actionItem}>
             <View className="at-icon at-icon-user"></View>微信好友
-            <Button openType="share" data-img={currentFeed.imageUrl}></Button>
+            <Button openType="share" data-img={ContentImg}></Button>
           </AtActionSheetItem>
           <AtActionSheetItem className={style.actionItem} onClick={handleSaveImg}>
             <View className="at-icon at-icon-image"></View>保存图片
@@ -288,7 +289,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
       </View>
       <DrawCanvas
         isOpened={canvasVisible}
-        imageUrl={currentFeed.imageUrl}
+        // imageUrl={feedImg}
         onCancel={canvasCancel}
         data={currentFeed}
       />

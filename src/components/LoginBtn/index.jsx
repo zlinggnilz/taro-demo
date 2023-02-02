@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import Taro from '@tarojs/taro';
+import { View } from '@tarojs/components';
 import { AtButton } from 'taro-ui';
 import { observer, inject } from 'mobx-react';
 
@@ -13,7 +13,7 @@ const LoginBtn = ({
   children,
   phoneCallback,
   state,
-  btnProps
+  btnProps,
 }) => {
   const { isLogin, isAuthUserInfo } = userStore;
 
@@ -69,16 +69,43 @@ const LoginBtn = ({
     }
   };
 
-  const handleUserInfo = () => {};
+  const handleLogin = async () => {
+    await userStore.login({
+      code: '1',
+      encryptedData: '1',
+      iv: '1',
+    });
+    phoneCallback && phoneCallback();
+  };
+
+  const handleUserInfo = () => {
+    // Taro.getOpenUserInfo({
+    //   fail: (error) => {
+    //     console.error('getAuthUserInfo', error);
+    //   },
+    //   success: (res) => {
+    //     console.log(`userInfo:`, res);
+    //     const info = JSON.parse(res.response).response // 以下方的报文格式解析两层 response
+    //     userStore.setUserInfo(info)
+    //     console.log(info)
+    //     Taro.showModal({
+    //       title: '基础信息',
+    //       content: JSON.stringify(info),
+    //     })
+    //   }
+    // });
+  };
 
   if (!isLogin) {
     return (
       <>
         {phoneDesc}
+        <View className="py-8 font-28">个人版不能获取手机号，点击假装登录</View>
         <AtButton
           type="primary"
-          openType="getPhoneNumber"
-          onGetPhoneNumber={handlePhone}
+          // openType="getPhoneNumber"
+          // onGetPhoneNumber={handlePhone}
+          onClick={handleLogin}
           loading={state === 'pending'}
           {...btnProps}
         >

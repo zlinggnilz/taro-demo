@@ -3,8 +3,8 @@ import { setLocal, clearLocal, getLocal } from '@/utils/utils';
 import request from '../utils/request';
 
 class User {
-  // @observable isLogin = getLocal('userInfo')?true:false; // 缓存中是否有 access token
-  @observable isLogin = true; // 缓存中是否有 access token
+  @observable isLogin = getLocal('userInfo')?true:false; // 缓存中是否有 access token
+  // @observable isLogin = false; // 缓存中是否有 access token
   @observable userInfo = getLocal('userInfo') || {};
   // @observable userInfo = { uid: '001', name: 'test name' };
   @observable loginState = ''; // pending, done, error
@@ -29,11 +29,13 @@ class User {
       this.loginState = 'pending';
       try {
         const { data } = yield request.post('/user/login', params);
+        console.log("🚀 ~ file: user.js:32 ~ User ~ data", data)
         this.loginState = 'done';
         this.userInfo = data;
         this.isLogin = true;
 
         // setLocal('accessToken',data.accessToken);
+        setLocal('accessToken', Date.now());
         setLocal('userInfo', data);
 
         return Promise.resolve();
@@ -54,7 +56,9 @@ class User {
     this.isLogin = false;
     this.userInfo = {};
     clearLocal(); // 清除缓存
-    // 清除store数据
+    //
+    // 清除store 中用户的其他数据
+    //
   }
 
   @action.bound
@@ -67,6 +71,7 @@ class User {
 
   fetchList = flow(
     function* (params) {
+      console.log('params',params)
       this.list = [];
       this.listState = 'pending';
       try {

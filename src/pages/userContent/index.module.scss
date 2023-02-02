@@ -1,5 +1,21 @@
-.customPublish{
+@import '~@/style/val.scss';
+.customPublish {
   position: fixed;
-  bottom: 32PX;
   right: 32PX;
+  bottom: 48PX;
+  margin-bottom: $tabBarHeight;
+}
+
+.item {
+  padding: 32px 0;
+  border-bottom: 1px dashed rgba($color: #000, $alpha: 0.3);
+  font-size: 28px;
+}
+.wrap {
+  padding: 16px 32px;
+}
+
+.img {
+  width: 160px;
+  height: 160px;
 }

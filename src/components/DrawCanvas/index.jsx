@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Image, Canvas } from '@tarojs/components';
 // import { observer, inject } from 'mobx-react';
 import Taro from '@tarojs/taro';
-import qrimg from '@/assets/qr.png';
-// import base64src from '@/utils/base64';
+import qrimg from '@/assets/qr.jpg';
+import ContentImg from '@/assets/where.jpg';
 import { textByteLength } from '@/utils/utils';
 import style from './index.module.scss';
+// import base64src from '@/utils/base64';
 // import qrcode from './qrcode';
 
 // let baseUrlCode = '';
@@ -103,7 +104,8 @@ const DrawCanvas = (props) => {
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, WIDTH, canvasInfo.height);
       ctx.clearRect(0, 0, 0, 0);
-      Taro.getImageInfo({ src: imgTempPath.current }).then((res) => {
+      // Taro.getImageInfo({ src: imgTempPath.current }).then((res) => {
+      Taro.getImageInfo({ src: ContentImg }).then((res) => {
         // 获取图片的高度
         const IMAGEHEIGHT = res.height;
         const IMAGEWIDTH = res.width;
@@ -120,8 +122,12 @@ const DrawCanvas = (props) => {
         const imgW = WIDTH;
         const imgH = (IMAGEHEIGHT * imgW) / IMAGEWIDTH;
 
-        ctx.drawImage(imgTempPath.current, 0, 152, imgW, imgH);
+        // ctx.drawImage(imgTempPath.current, 0, 152, imgW, imgH);
+        ctx.drawImage(ContentImg, 0, 152, imgW, imgH);
         ctx.restore();
+
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(0, 152, imgW, imgH);
 
         let str2 = data.text;
         let [contentLeng, contentArray, contentRows] = textByteLength(str2, 36);
@@ -137,6 +143,8 @@ const DrawCanvas = (props) => {
         ctx.drawImage(qrimg, WIDTH - 160 - 32, 754, 160, 160);
         ctx.restore();
 
+        
+
         ctx.setFillStyle('#333333'); //  颜色
         ctx.setFontSize(32);
         let str4 = '长按识别二维码';
@@ -148,6 +156,7 @@ const DrawCanvas = (props) => {
         });
       });
     } catch (error) {
+      console.log("🚀 ~ file: index.jsx:153 ~ wxDrawImage ~ error", error)
       Taro.hideLoading();
       Taro.showToast({
         title: '生成图片失败',
@@ -157,7 +166,7 @@ const DrawCanvas = (props) => {
   };
 
   const start = async () => {
-    await downLoad();
+    // await downLoad(); 
     wxDrawImage();
   };
 

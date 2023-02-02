@@ -4,6 +4,9 @@ import { View, Text, Image } from '@tarojs/components';
 import { observer, inject } from 'mobx-react';
 import PromiseAction from '@/components/PromiseAction';
 import style from './index.module.scss';
+// import {feedImg} from '@/constant';
+import ContentImg from '@/assets/where.jpg';
+
 
 const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) => {
   const { userInfo, isLogin } = userStore;
@@ -20,6 +23,17 @@ const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) 
 
     return data.isLike ? contentStore.feedUnLike(params) : contentStore.feedLike(params);
   };
+
+  const handleComment = ()=>{
+    if(!isLogin){
+      Taro.navigateTo({
+        url: '/pages/login/index',
+      });
+      return;
+    }
+
+    handleCommentFetch(data)
+  }
 
   return (
     <>
@@ -45,16 +59,16 @@ const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) 
           )}
           {data.imageUrl && (
             <View>
-              <Image src={data.imageUrl} className={style.img} mode="widthFix" />
+              <Image src={ContentImg} className={style.img} mode="widthFix" />
             </View>
           )}
         </View>
         <View className={`${style.action} flex align-middle`}>
           <PromiseAction className="flex-box" onClick={handleLike}>
-            <View className={`at-icon ${data.isLike ? 'at-icon-heart-2 font-red' : 'at-icon-heart'}`}></View>
+            <View className={`at-icon ${data.isLike ? 'at-icon-heart-2 text-red' : 'at-icon-heart'}`}></View>
             {data.likeCount > 0 && <Text className={style.actionNum}>{data.likeCount}</Text>}
           </PromiseAction>
-          <View className="flex-box" onClick={()=>{handleCommentFetch(data)}}>
+          <View className="flex-box" onClick={handleComment}>
             <View className="at-icon at-icon-message"></View>
           </View>
           <View className="flex-box" onClick={()=>{handleShare(data)}}>

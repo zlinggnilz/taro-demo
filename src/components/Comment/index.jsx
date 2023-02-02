@@ -52,7 +52,7 @@ const Comment = ({
           <View>
             <PromiseAction className={style.commentIcon} onClick={handleLike}>
               <View
-                className={`at-icon ${data.isLike ? 'at-icon-heart-2 font-red' : 'at-icon-heart'}`}
+                className={`at-icon ${data.isLike ? 'at-icon-heart-2 text-red' : 'at-icon-heart'}`}
               ></View>
             </PromiseAction>
           </View>

@@ -1,6 +1,6 @@
-@import "./style/val.scss";
+@import './style/val.scss';
 
-@import "~taro-ui/dist/style/index.scss";
+@import '~taro-ui/dist/style/index.scss';
 
 // @import "~taro-ui/dist/style/components/modal.scss";
 // @import "~taro-ui/dist/style/components/action-sheet.scss";
@@ -14,9 +14,9 @@ page {
 }
 
 .container {
-  padding-bottom: env(safe-area-inset-bottom);
   overflow: hidden;
   box-sizing: border-box;
+  padding-bottom: calc($tabBarHeight + env(safe-area-inset-bottom));
 }
 
 .content-wrap {
@@ -28,20 +28,20 @@ page {
 }
 
 .text-overflow {
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .tag {
   display: inline-block;
+  margin-right: 16px;
   padding: 6px 12px;
   vertical-align: middle;
-  margin-right: 16px;
   color: #909090;
-  font-size: 24px;
-  background: #f5f5f5;
   border-radius: 6px;
+  background: #f5f5f5;
+  font-size: 24px;
 
   &:last-child {
     margin-right: 0;
@@ -50,12 +50,12 @@ page {
 
 .more {
   width: 100%;
-  padding: 16px 0;
   margin-top: 24px;
   margin-bottom: 32px;
-  font-size: 12PX;
+  padding: 16px 0;
   text-align: center;
   color: rgba(0, 0, 0, 0.3);
+  font-size: 12PX;
 
   .at-activity-indicator {
     justify-content: center;
@@ -102,10 +102,44 @@ page {
   }
 }
 
+.flex-1,
 .flex-box {
   flex: 1;
 }
 
-.font-red {
+.text-red {
   color: $red;
+}
+
+.font-28 {
+  font-size: 28px;
+}
+.font-24 {
+  font-size: 24px;
+}
+
+.text-gray {
+  color: #999;
+}
+
+.px-8 {
+  padding-right: 32px;
+  padding-left: 32px;
+}
+.py-8 {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+.pa-8 {
+  padding: 32px;
+}
+.pt-8 {
+  padding-top: 32px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+.mt-8 {
+  margin-top: 32px;
 }

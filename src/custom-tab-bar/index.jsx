@@ -62,7 +62,7 @@ class TabBar extends Component {
     const url =  listCodes[code].pagePath
 
     if(code === 'published' && !isLogin){
-      Taro.navigateTo({ url: `/pages/login/index?redirect=${code}&type='tab'` });
+      Taro.navigateTo({ url: `/pages/login/index` });
 
     }else{
 

@@ -11,22 +11,14 @@ const Login = ({ userStore }) => {
 
   const currentInstance = getCurrentInstance();
 
-  const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
-
-
   const phoneCallback = () => {
     setTimeout(() => {
       const params = currentInstance.router.params
-      const {redirect,type} = params;
+      const {redirect} = params;
       if (redirect) {
-        if(type === 'tab'){
-          const tabbar = Taro.getTabBar(pageCtx);
-          tabbar?.switchTab(redirect);
-        }else{
           Taro.redirectTo({
             url: redirect,
           });
-        }
       } else {
         Taro.navigateBack();
       }

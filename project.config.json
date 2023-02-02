@@ -9,7 +9,7 @@
     "es6": false,
     "postcss": false,
     "preloadBackgroundData": false,
-    "minified": false,
+    "minified": true,
     "newFeature": true,
     "autoAudits": false,
     "coverView": true,

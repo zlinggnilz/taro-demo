@@ -1,11 +1,11 @@
-import { useState ,memo} from 'react';
+import { useState, memo } from 'react';
 import { View, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { AtImagePicker, AtButton } from 'taro-ui';
 import ModalSelect from '@/components/ModalSelect';
 import Tags from '@/components/Tags';
 import useUserStore from '@/store/useUserStore';
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow';
 import './index.scss';
 
 const tagList = [
@@ -32,7 +32,10 @@ const tagList = [
 ];
 
 const Publish = () => {
-  const { userInfo,publish} = useUserStore(state=>({userInfo:state.userInfo,publish: state.publish }),shallow)
+  const { userInfo, publish } = useUserStore(
+    (state) => ({ userInfo: state.userInfo, publish: state.publish }),
+    shallow
+  );
 
   const [files, setFiles] = useState([]);
   const [text, setText] = useState('');
@@ -63,6 +66,9 @@ const Publish = () => {
           const data = res.data;
           resolve(data.uri);
         },
+        fail(err) {
+          reject(err);
+        },
       });
     });
   };
@@ -88,11 +94,11 @@ const Publish = () => {
     // const imgUrl = await uploadImg();
 
     publish({
-        tagIds: selectedTags.join(','),
-        uid: userInfo.uid,
-        text: text.trim(),
-        imageUrl: files[0].url,
-      })
+      tagIds: selectedTags.join(','),
+      uid: userInfo.uid,
+      text: text.trim(),
+      imageUrl: files[0].url,
+    })
       .then(() => {
         setpublishLoading(false);
 
@@ -114,20 +120,20 @@ const Publish = () => {
   };
 
   return (
-    <View className="container">
+    <View className='container'>
       <Textarea
-        className="text"
-        placeholder="输入内容"
-        placeholderClass="placeholder"
+        className='text'
+        placeholder='输入内容'
+        placeholderClass='placeholder'
         onInput={handleTextChange}
       ></Textarea>
-      <View className="tagWrap">
+      <View className='tagWrap'>
         <Tags value={selectedTags} dataSource={tagList} onChange={handleTagChange} />
-        <View onClick={handleShowTagsModal} className="selectTagbtn">
+        <View onClick={handleShowTagsModal} className='selectTagbtn'>
           选择标签
         </View>
       </View>
-      <View className="imgWrap">
+      <View className='imgWrap'>
         <AtImagePicker
           multiple={false}
           count={1}
@@ -138,8 +144,8 @@ const Publish = () => {
         />
       </View>
 
-      <View className="btnWrap">
-        <AtButton circle type="primary" onClick={handlePublish} loading={publishLoading}>
+      <View className='btnWrap'>
+        <AtButton circle type='primary' onClick={handlePublish} loading={publishLoading}>
           发布
         </AtButton>
       </View>

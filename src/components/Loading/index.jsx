@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
-import Empty from '../Empty';
+import { useMemo, memo } from 'react';
 import { AtActivityIndicator } from 'taro-ui';
 import { View } from '@tarojs/components';
+import Empty from '../Empty';
 import style from './index.module.scss';
 
 const Loading = ({ state, children, showError = true, center = false, data, showEmpty = true }) => {
   const mode = useMemo(() => (center === true ? 'center' : 'normal'), [center]);
 
   if (state === 'error' && showError) {
-    return <Empty type="error" />;
+    return <Empty type='error' />;
   }
 
   if (state === 'done' && showEmpty && data && data.length === 0) {
@@ -27,4 +27,4 @@ const Loading = ({ state, children, showError = true, center = false, data, show
   );
 };
 
-export default Loading;
+export default memo(Loading);

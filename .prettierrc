@@ -1,7 +1,11 @@
 {
+  "printWidth": 100,
   "singleQuote": true,
   "trailingComma": "es5",
-  "printWidth": 100,
+  "semi": true,
+  "bracketSpacing":true,
+  "proseWrap":"never",
+  "endOfLine":"lf",
   "overrides": [{
     "files": ".prettierrc",
     "options": {

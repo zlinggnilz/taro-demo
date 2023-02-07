@@ -1,7 +1,8 @@
 /* eslint-disable */
 import { Component } from 'react';
 import Taro from '@tarojs/taro';
-import store from './store';
+import useGlobalStore from '@/store/useGlobalStore';
+import { shareImg, shareTitle } from '@/constant';
 
 import './app.scss';
 
@@ -19,8 +20,8 @@ import './app.scss';
       {
         onShareAppMessage: function () {
           return {
-            title: '今天出太阳[]~(￣▽￣)~*',
-            imageUrl: '../../assets/login.png',
+            title: shareTitle,
+            imageUrl: shareImg,
           };
         },
       },
@@ -35,14 +36,15 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    let res = {};
     try {
-      const res = Taro.getSystemInfoSync();
-      store.globalStore.setSysInfo(res);
+      res = Taro.getSystemInfoSync();
     } catch (e) {
       //
     }
     const btnInfo = Taro.getMenuButtonBoundingClientRect();
-    store.globalStore.setHeaderBtnPosi(btnInfo);
+    const update = useGlobalStore.getState().setSysAndMenuBtnInfo;
+    update(res, btnInfo);
   }
 
   componentDidMount() {}

@@ -1,8 +1,5 @@
-import {
-  create
-} from 'zustand'
-import request from '../utils/request';
-
+import { create } from 'zustand';
+import * as apis from '@/service';
 
 const useCampaignStore = create((set, get) => ({
   list: [],
@@ -10,17 +7,15 @@ const useCampaignStore = create((set, get) => ({
   listState: '', // pending, done, error
 
   fetchList: async (params) => {
-    // this.list = [];
     set({
-      listState: 'pending'
-    })
+      // list:[],
+      listState: 'pending',
+    });
     try {
-      const {
-        data
-      } = await request.post('/campaign/list', params);
+      const { data } = await apis.campaignList(params);
 
       const listState = 'done';
-      let list = get().list
+      let list = get().list;
       if (params.page === 1) {
         list = data.list;
       } else {
@@ -28,23 +23,23 @@ const useCampaignStore = create((set, get) => ({
       }
       const listPage = {
         page: data.pageNo,
-        totalPage: data.totalPage
+        totalPage: data.totalPage,
       };
 
       set({
         listState,
         listPage,
-        list
-      })
+        list,
+      });
 
       return Promise.resolve(data.list);
     } catch (error) {
       set({
-        listState: 'error'
-      })
+        listState: 'error',
+      });
       return Promise.reject(error);
     }
-  }
-}))
+  },
+}));
 
-export default useCampaignStore
+export default useCampaignStore;

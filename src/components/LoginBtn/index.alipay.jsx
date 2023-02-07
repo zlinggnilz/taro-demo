@@ -1,7 +1,7 @@
-import { memo,useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Taro from '@tarojs/taro';
 import { AtButton } from 'taro-ui';
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow';
 import useUserStore from '@/store/useUserStore';
 
 const LoginBtn = ({
@@ -15,9 +15,14 @@ const LoginBtn = ({
   state,
   btnProps,
 }) => {
-  const { isLogin, userInfo,login, } = useUserStore(store=>({
-    isLogin:store.isLogin, userInfo:store.userInfo,login:store.login,
-  }),shallow);
+  const { isLogin, userInfo, login } = useUserStore(
+    (store) => ({
+      isLogin: store.isLogin,
+      userInfo: store.userInfo,
+      login: store.login,
+    }),
+    shallow
+  );
 
   const isAuthUserInfo = useMemo(() => {
     if (userInfo && Object.keys(userInfo).length > 0) {
@@ -59,9 +64,9 @@ const LoginBtn = ({
       <>
         {phoneDesc}
         <button
-          type="primary"
-          open-type="getAuthorize"
-          scope="phoneNumber"
+          type='primary'
+          open-type='getAuthorize'
+          scope='phoneNumber'
           onGetAuthorize={handlePhone}
           loading={state === 'pending'}
           {...btnProps}
@@ -77,8 +82,8 @@ const LoginBtn = ({
       <>
         {infoDesc}
         <AtButton
-          type="primary"
-          openType="getUserInfo"
+          type='primary'
+          openType='getUserInfo'
           onGetUserInfo={handleUserInfo}
           loading={state === 'pending'}
           {...btnProps}

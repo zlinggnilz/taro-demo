@@ -1,94 +1,86 @@
-import {
-  create
-} from 'zustand'
-import request from '../utils/request';
+import { create } from 'zustand';
+import * as apis from '@/service';
 
 const useContentStore = create((set, get) => ({
   list: [],
   listPage: {
-    page: 0
+    page: 0,
   },
   listState: '', // pending, done, error
   commentList: [],
   commentListState: '', // pending, done, error
 
   fetchList: async (params) => {
-    // this.list = [];
+    //
     set({
-      listState: 'pending'
-    })
+      // list:[],
+      listState: 'pending',
+    });
     try {
-      const {
-        data
-      } = await request.get('/feed/list/home', params);
+      const { data } = await apis.homeFeedList(params);
 
       const listState = 'done';
-      let list = get().list
+      let list = get().list;
       if (params.page === 1) {
         list = data.feedList;
       } else {
         list = [...list, ...data.feedList];
       }
       const listPage = {
-        page: params.page
+        page: params.page,
       };
 
       set({
         listState,
         list,
-        listPage
-      })
+        listPage,
+      });
 
       return Promise.resolve(data.feedList);
     } catch (error) {
       set({
-        listState: 'error'
-      })
+        listState: 'error',
+      });
       return Promise.reject(error);
     }
   },
 
   fetchCommentList: async (params) => {
-
     set({
       commentList: [],
       commentListState: 'pending',
-    })
+    });
     try {
-      const {
-        data
-      } = await request.get('/comment/list', params);
+      const { data } = await apis.commentList(params);
       set({
         commentList: data.commentList,
         commentListState: 'done',
-      })
+      });
     } catch (error) {
       set({
         commentListState: 'error',
-      })
+      });
     }
   },
 
   fetchReplyList: async (params) => {
     try {
-      const {
-        data
-      } = await request.get('/reply/list', params);
+      const { data } = await apis.replyList(params);
 
-      let commentList = get().commentList
+      let commentList = get().commentList;
       commentList = commentList.map((item) => {
         if (item.commentId === params.commentId) {
           return {
             ...item,
-            replyList: [...item.replyList, ...data.replyList]
+            replyList: [...item.replyList, ...data.replyList],
           };
         }
         return item;
       });
 
       set({
-        commentList
-      })
+        commentList,
+      });
 
       return Promise.resolve();
     } catch (error) {
@@ -97,11 +89,11 @@ const useContentStore = create((set, get) => ({
   },
 
   replyPost: async (params) => {
+    let commentList = get().commentList;
     try {
-      const {
-        data
-      } = await request.post('/comment/post', params);
-      this.commentList = [data, ...this.commentList];
+      const { data } = await apis.replyPost(params);
+      commentList = [data, ...commentList];
+      set(commentList);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -110,19 +102,17 @@ const useContentStore = create((set, get) => ({
 
   replyComment: async (params) => {
     try {
-      const {
-        data
-      } = await request.post('/reply/post', params);
-      let commentList = get().commentList
-      commentList = this.commentList.map((item) => {
+      const { data } = await apis.replyComment(params);
+      let commentList = get().commentList;
+      commentList = commentList.map((item) => {
         if (item.commentId === params.commentId) {
           item.replyList = [data, ...item.replyList];
         }
         return item;
       });
       set({
-        commentList
-      })
+        commentList,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -131,10 +121,8 @@ const useContentStore = create((set, get) => ({
 
   replyCommentReply: async (params) => {
     try {
-      const {
-        data
-      } = await request.post('/reply/again', params);
-      let commentList = get().commentList
+      const { data } = await apis.replyCommentReply(params);
+      let commentList = get().commentList;
       commentList = commentList.map((item) => {
         if (item.commentId === params.commentId) {
           item.replyList = [data, ...item.replyList];
@@ -142,8 +130,8 @@ const useContentStore = create((set, get) => ({
         return item;
       });
       set({
-        commentList
-      })
+        commentList,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -152,21 +140,21 @@ const useContentStore = create((set, get) => ({
 
   feedLike: async (params) => {
     try {
-      await request.post('/feed/like', params);
-      let list = get().list
+      await apis.feedLike(params);
+      let list = get().list;
       list = list.map((item) => {
         if (item.feedId === params.feedId) {
           return {
             ...item,
             isLike: 1,
-            like_count: item.like_count + 1
+            like_count: item.like_count + 1,
           };
         }
         return item;
       });
       set({
-        list
-      })
+        list,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -175,21 +163,21 @@ const useContentStore = create((set, get) => ({
 
   feedUnLike: async (params) => {
     try {
-      await request.post('/feed/unlike', params);
-      let list = get().list
+      await apis.feedUnLike(params);
+      let list = get().list;
       list = list.map((item) => {
         if (item.feedId === params.feedId) {
           return {
             ...item,
             isLike: 0,
-            like_count: item.like_count - 1
+            like_count: item.like_count - 1,
           };
         }
         return item;
       });
       set({
-        list
-      })
+        list,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -198,16 +186,16 @@ const useContentStore = create((set, get) => ({
 
   commentLike: async (params) => {
     try {
-      const url = params.replyId ? '/reply/like' : '/comment/like';
-      await request.post(url, params);
-      let commentList = get().commentList
+      const action = params.replyId ? apis.replyLike : apis.commentLike;
+      await action(params);
+      let commentList = get().commentList;
       commentList = commentList.map((item) => {
         if (item.commentId === params.commentId) {
           if (!params.replyId) {
             return {
               ...item,
               isLike: 1,
-              like_count: item.like_count + 1
+              like_count: item.like_count + 1,
             };
           } else {
             item.replyList = item.replyList.map((subItem) => {
@@ -215,7 +203,7 @@ const useContentStore = create((set, get) => ({
                 return {
                   ...subItem,
                   isLike: 1,
-                  like_count: subItem.like_count + 1
+                  like_count: subItem.like_count + 1,
                 };
               }
               return subItem;
@@ -225,8 +213,8 @@ const useContentStore = create((set, get) => ({
         return item;
       });
       set({
-        commentList
-      })
+        commentList,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -235,16 +223,16 @@ const useContentStore = create((set, get) => ({
 
   commentUnLike: async (params) => {
     try {
-      const url = params.replyId ? '/reply/unlike' : '/comment/unlike';
-      await request.post(url, params);
-      let commentList = get().commentList
+      const action = params.replyId ? apis.replyUnLike : apis.commenUntLike;
+      await action(params);
+      let commentList = get().commentList;
       commentList = commentList.map((item) => {
         if (item.commentId === params.commentId) {
           if (!params.replyId) {
             return {
               ...item,
               isLike: 0,
-              like_count: item.like_count - 1
+              like_count: item.like_count - 1,
             };
           } else {
             item.replyList = item.replyList.map((subItem) => {
@@ -252,7 +240,7 @@ const useContentStore = create((set, get) => ({
                 return {
                   ...subItem,
                   isLike: 0,
-                  like_count: subItem.like_count - 1
+                  like_count: subItem.like_count - 1,
                 };
               }
               return subItem;
@@ -262,14 +250,13 @@ const useContentStore = create((set, get) => ({
         return item;
       });
       set({
-        commentList
-      })
+        commentList,
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
     }
-  }
+  },
+}));
 
-}))
-
-export default useContentStore
+export default useContentStore;

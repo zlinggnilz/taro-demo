@@ -1,8 +1,8 @@
-import { memo,useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Taro from '@tarojs/taro';
 import { View } from '@tarojs/components';
 import { AtButton } from 'taro-ui';
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow';
 import useUserStore from '@/store/useUserStore';
 
 const LoginBtn = ({
@@ -16,9 +16,14 @@ const LoginBtn = ({
   state,
   btnProps,
 }) => {
-  const { isLogin, userInfo,login, } = useUserStore(store=>({
-    isLogin:store.isLogin, userInfo:store.userInfo,login:store.login,
-  }),shallow);
+  const { isLogin, userInfo, login } = useUserStore(
+    (store) => ({
+      isLogin: store.isLogin,
+      userInfo: store.userInfo,
+      login: store.login,
+    }),
+    shallow
+  );
 
   const isAuthUserInfo = useMemo(() => {
     if (userInfo && Object.keys(userInfo).length > 0) {
@@ -110,9 +115,9 @@ const LoginBtn = ({
     return (
       <>
         {phoneDesc}
-        <View className="py-8 font-28">个人版不能获取手机号，点击假装登录</View>
+        <View className='py-8 font-28'>个人版不能获取手机号，点击假装登录</View>
         <AtButton
-          type="primary"
+          type='primary'
           // openType="getPhoneNumber"
           // onGetPhoneNumber={handlePhone}
           onClick={handleLogin}
@@ -130,8 +135,8 @@ const LoginBtn = ({
       <>
         {infoDesc}
         <AtButton
-          type="primary"
-          openType="getUserInfo"
+          type='primary'
+          openType='getUserInfo'
           onGetUserInfo={handleUserInfo}
           loading={state === 'pending'}
           {...btnProps}

@@ -1,10 +1,11 @@
-import  { useCallback, useState, createRef, useMemo,memo } from 'react';
-import { View, Button, Image,Input } from '@tarojs/components';
+import { useCallback, useState, createRef, useMemo, memo } from 'react';
+import { View, Button, Image, Input } from '@tarojs/components';
 import Taro, {
   useShareAppMessage,
   useDidShow,
   usePullDownRefresh,
-  useReachBottom
+  useReachBottom,
+  useLoad,
 } from '@tarojs/taro';
 import { AtFloatLayout, AtActionSheet, AtActionSheetItem } from 'taro-ui';
 import ListMore from '@/components/ListMore';
@@ -17,7 +18,7 @@ import Feed from '@/components/Feed';
 import Comment from '@/components/Comment';
 // import { feedImg } from '@/constant';
 import ContentImg from '@/assets/where.jpg';
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow';
 import useUserStore from '@/store/useUserStore';
 import useGlobalStore from '@/store/useGlobalStore';
 import useContentStore from '@/store/useContentStore';
@@ -25,13 +26,41 @@ import useContentStore from '@/store/useContentStore';
 import style from './index.module.scss';
 
 const Index = () => {
+  const {
+    list,
+    listState,
+    commentList,
+    commentListState,
+    fetchCommentList,
+    fetchReplyList,
+    fetchList,
+    listPage,
+    replyCommentReply,
+    replyComment,
+    replyPost,
+  } = useContentStore(
+    (state) => ({
+      list: state.list,
+      listState: state.listState,
+      commentList: state.commentList,
+      commentListState: state.commentListState,
+      fetchCommentList: state.fetchCommentList,
+      fetchReplyList: state.fetchReplyList,
+      fetchList: state.fetchList,
+      listPage: state.listPage,
+      replyCommentReply: state.replyCommentReply,
+      replyComment: state.replyComment,
+      replyPost: state.replyPost,
+    }),
+    shallow
+  );
 
-  const { list, listState, commentList, commentListState,fetchCommentList ,fetchReplyList,fetchList,listPage,replyCommentReply,replyComment,replyPost} = useContentStore(state=>({list:state.list, listState:state.listState, commentList:state.commentList, commentListState:state.commentListState,fetchCommentList:state.fetchCommentList ,fetchReplyList:state.fetchReplyList,fetchList:state.fetchList, listPage:state.listPage,replyCommentReply:state.replyCommentReply, replyComment:state.replyComment,replyPost:state.replyPost }),shallow);
+  const userInfo = useUserStore((state) => state.userInfo);
 
-  const {userInfo,userId} = useUserStore(state=>({userInfo:state.userInfo, userId: state.userId}),shallow)
-
-  const { navHeight,statusBarHeight} = useGlobalStore(state=>({navHeight:state.navHeight,statusBarHeight:state.statusBarHeight}),shallow)
-
+  const { navHeight, statusBarHeight } = useGlobalStore(
+    (state) => ({ navHeight: state.navHeight, statusBarHeight: state.statusBarHeight }),
+    shallow
+  );
 
   const [commentVisible, setCommentVisible] = useState(false);
   const [shareVisible, setShareVisible] = useState(false);
@@ -43,6 +72,8 @@ const Index = () => {
 
   const feedListRef = createRef();
 
+  const userId = useMemo(() => userInfo.uid, [userInfo]);
+
   const mt = useMemo(() => {
     if (process.env.TARO_ENV === 'alipay') {
       return navHeight + statusBarHeight;
@@ -50,29 +81,32 @@ const Index = () => {
     if (process.env.TARO_ENV === 'weapp') {
       return navHeight;
     }
-  }, []);
+  }, [navHeight, statusBarHeight]);
 
   const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
 
-  useDidShow(() => {
+  useLoad(() => {
     feedListRef.current.getList({ start: -1, page: 1 });
-    const tabbar = Taro.getTabBar(pageCtx)
-    tabbar?.setSelected('home')
+    console.log('---------------------- on load ----------------------');
+  });
+
+  useDidShow(() => {
+    const tabbar = Taro.getTabBar(pageCtx);
+    tabbar?.setSelected('home');
   });
 
   // useEffect(() => {
-    // fetchList({ start: 1, length: 20 });
-    // console.log(globalStore);
-    // if (process.env.TARO_ENV === 'alipay') {
-    //   my.setNavigationBar({
-    //     title: '首页alipay',
-    //     backgroundColor: '#ffffff',
-    //     // borderBottomColor,
-    //     image: 'https://gz.bcebos.com/v1/newretail/df3i/pyq-share.png',
-    //   });
-    // }
+  // fetchList({ start: 1, length: 20 });
+  // console.log(globalStore);
+  // if (process.env.TARO_ENV === 'alipay') {
+  //   my.setNavigationBar({
+  //     title: '首页alipay',
+  //     backgroundColor: '#ffffff',
+  //     // borderBottomColor,
+  //     image: 'https://gz.bcebos.com/v1/newretail/df3i/pyq-share.png',
+  //   });
+  // }
   // }, []);
-
 
   usePullDownRefresh(() => {
     feedListRef.current.getList({ start: -1, page: 1 }).finally(() => {
@@ -86,9 +120,8 @@ const Index = () => {
   const handleCommentFetch = (data) => {
     setcurrentFeed(data);
     setCommentVisible(true);
-    const uid = userId;
     fetchCommentList({
-      uid,
+      uid: userId,
       feedId: data.feedId,
       start: 1,
       length: 20,
@@ -97,7 +130,7 @@ const Index = () => {
     setcurrentComment({
       toUid: data.uid,
       feedId: data.feedId,
-      fromUid: uid,
+      fromUid: userId,
     });
   };
 
@@ -240,9 +273,9 @@ const Index = () => {
 
   return (
     <>
-      <NavBar title="首页" leftContent={<UserCard></UserCard>}></NavBar>
+      <NavBar title='首页' leftContent={<UserCard></UserCard>}></NavBar>
 
-      <View style={{ marginTop: mt }} className="container">
+      <View style={{ marginTop: mt }} className='container'>
         {/* <View className="container"> */}
         <ListMore
           ref={feedListRef}
@@ -254,18 +287,15 @@ const Index = () => {
           pageData={listPage}
         />
       </View>
-      <AtFloatLayout
-        isOpened={commentVisible}
-        title="评论"
-        onClose={handleCommentVisible}
-      >
+      <AtFloatLayout isOpened={commentVisible} title='评论' onClose={handleCommentVisible}>
         <View className={style.commentList}>
           <List renderItem={renderComment} dataSource={commentList} state={commentListState} />
         </View>
         <View className={`flex align-stretch ${style.commitWrap}`}>
           <Image src={userInfo.avatar} className={style.commitAvatar}></Image>
           <View className={`flex-box ${style.commitInputWrap}`}>
-            <Input className={style.commitInput}
+            <Input
+              className={style.commitInput}
               type='text'
               placeholder={`评论${currentComment.to ? '@' + currentComment.to : ''}`}
               placeholderStyle='color:#888'
@@ -273,7 +303,7 @@ const Index = () => {
               onInput={handleCommitValue}
             />
           </View>
-          <PromiseAction onClick={handleSendCommit} className={style.commitBtn} color="white">
+          <PromiseAction onClick={handleSendCommit} className={style.commitBtn} color='white'>
             发送
           </PromiseAction>
         </View>
@@ -286,11 +316,11 @@ const Index = () => {
           onClose={handleShareVisible}
         >
           <AtActionSheetItem className={style.actionItem}>
-            <View className="at-icon at-icon-user"></View>微信好友
-            <Button openType="share" data-img={ContentImg}></Button>
+            <View className='at-icon at-icon-user'></View>微信好友
+            <Button openType='share' data-img={ContentImg}></Button>
           </AtActionSheetItem>
           <AtActionSheetItem className={style.actionItem} onClick={handleSaveImg}>
-            <View className="at-icon at-icon-image"></View>保存图片
+            <View className='at-icon at-icon-image'></View>保存图片
           </AtActionSheetItem>
         </AtActionSheet>
       </View>
@@ -304,4 +334,4 @@ const Index = () => {
   );
 };
 
-export default (Index);
+export default memo(Index);

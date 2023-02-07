@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, memo } from 'react';
 import Taro from '@tarojs/taro';
 import { View } from '@tarojs/components';
 import { AtActivityIndicator } from 'taro-ui';
@@ -9,16 +9,14 @@ const PromiseAction = ({ children, className, onClick, params, color, successMes
   const [loading, setloading] = useState(false);
 
   const handleClick = (e) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (loading) {
       return;
     }
 
-
     const handle = onClick(params);
 
     if (!(handle && handle.then)) {
-
       console.warn('PromiseAction onClick should return Promise');
       return;
     }
@@ -27,11 +25,11 @@ const PromiseAction = ({ children, className, onClick, params, color, successMes
     handle.then(
       function () {
         setloading(false);
-        successMessage && Taro.showToast({title:successMessage,icon:'none'})
+        successMessage && Taro.showToast({ title: successMessage, icon: 'none' });
       },
       function (err) {
         setloading(false);
-        console.log('err',err);
+        console.log('err', err);
       }
     );
   };
@@ -43,4 +41,4 @@ const PromiseAction = ({ children, className, onClick, params, color, successMes
   );
 };
 
-export default PromiseAction;
+export default memo(PromiseAction);

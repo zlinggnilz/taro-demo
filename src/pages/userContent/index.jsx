@@ -1,17 +1,24 @@
-import { useMemo, useCallback,memo } from 'react';
+import { useMemo, useCallback, memo } from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
 import List from '@/components/List';
 import { AtFab } from 'taro-ui';
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow';
 import useUserStore from '@/store/useUserStore';
 import style from './index.module.scss';
 import './index.scss';
 
-const UserContent = ( ) => {
-  const { isLogin, userInfo, list, listState,fetchList } = useUserStore(state=>({
-    isLogin:state.isLogin, userInfo:state.userInfo, list:state.list, listState:state.listState,fetchList:state.fetchList
-  }),shallow);
+const UserContent = () => {
+  const { isLogin, userInfo, list, listState, fetchList } = useUserStore(
+    (state) => ({
+      isLogin: state.isLogin,
+      userInfo: state.userInfo,
+      list: state.list,
+      listState: state.listState,
+      fetchList: state.fetchList,
+    }),
+    shallow
+  );
 
   const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
 
@@ -64,14 +71,14 @@ const UserContent = ( ) => {
   const renderItem = (record, index) => {
     return (
       <View key={record.feedId} className={`${style.item} flex`}>
-        <View className="flex-box">{record.text}</View>
+        <View className='flex-box'>{record.text}</View>
         <Image src={record.imageUrl} className={style.img} />
       </View>
     );
   };
 
   return (
-    <View className="container">
+    <View className='container'>
       <List
         className={style.wrap}
         // style={waterStyle}
@@ -81,7 +88,7 @@ const UserContent = ( ) => {
       ></List>
       <View className={style.customPublish}>
         <AtFab onClick={handleClick}>
-          <Text className="at-fab__icon at-icon at-icon-add"></Text>
+          <Text className='at-fab__icon at-icon at-icon-add'></Text>
         </AtFab>
       </View>
     </View>

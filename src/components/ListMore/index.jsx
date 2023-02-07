@@ -1,4 +1,4 @@
-import { useState, useImperativeHandle, forwardRef } from 'react';
+import { useState, useImperativeHandle, forwardRef, memo } from 'react';
 import { View, Text } from '@tarojs/components';
 import { AtActivityIndicator } from 'taro-ui';
 import Loading from '../Loading';
@@ -15,35 +15,35 @@ const List = forwardRef((props, ref) => {
     style,
     fetchList,
     pageData = {},
-    pageSize = 20
+    pageSize = 20,
   } = props;
 
   const [listState, setListState] = useState('');
 
-  const getList = (params={}) => {
+  const getList = (params = {}) => {
     const page = params.page || params.pageNo;
     let p = 1;
     if (page == null) {
       p = (pageData.page || 0) + 1;
     }
-    if(listState === 'finish' && page !== 1){
-      return
+    if (listState === 'finish' && page !== 1) {
+      return;
     }
     if (p === 1) {
       setListState('pending');
     }
-    return fetchList({ length: pageSize, page: p, pageNo:p, pageSize, ...params })
+    return fetchList({ length: pageSize, page: p, pageNo: p, pageSize, ...params })
       .then((data) => {
-        if ( p >= pageData.totalPage){
-          setListState('finish')
-        }else if (data && data.length == pageSize ) {
+        if (p >= pageData.totalPage) {
+          setListState('finish');
+        } else if (data && data.length == pageSize) {
           setListState('done');
         } else {
           setListState('finish');
         }
       })
       .catch((error) => {
-        console.log("🚀 getList ~ error", error)
+        console.log('🚀 getList ~ error', error);
         setListState('error');
       });
   };
@@ -63,10 +63,10 @@ const List = forwardRef((props, ref) => {
       <View className={className} style={style}>
         {dataSource && dataSource.map((...v) => renderItem && renderItem(...v))}
       </View>
-      <View className="more">
+      <View className='more'>
         {state === 'error' && <Text onClick={getList}>点击加载更多</Text>}
         {state == 'pending' && listState !== 'pending' && (
-          <AtActivityIndicator content="加载中..."></AtActivityIndicator>
+          <AtActivityIndicator content='加载中...'></AtActivityIndicator>
         )}
         {dataSource && dataSource.length > 0 && listState === 'finish' && '- 没有更多了 -'}
       </View>
@@ -74,4 +74,4 @@ const List = forwardRef((props, ref) => {
   );
 });
 
-export default List;
+export default memo(List);

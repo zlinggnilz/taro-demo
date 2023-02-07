@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Image, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import qrimg from '@/assets/qr.jpg';
@@ -23,6 +23,11 @@ const DrawCanvas = (props) => {
   //   });
   // }, []);
 
+  const start = useCallback(async () => {
+    // await downLoad();
+    wxDrawImage();
+  }, []);
+
   useEffect(() => {
     if (!isOpened) {
       setposterImage('');
@@ -35,7 +40,7 @@ const DrawCanvas = (props) => {
     //   })
     // });
     start();
-  }, [isOpened]);
+  }, [isOpened, start]);
 
   // 下载网络图片
   const downLoad = () => {
@@ -125,7 +130,7 @@ const DrawCanvas = (props) => {
         ctx.drawImage(ContentImg, 0, 152, imgW, imgH);
         ctx.restore();
 
-        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
         ctx.fillRect(0, 152, imgW, imgH);
 
         let str2 = data.text;
@@ -142,8 +147,6 @@ const DrawCanvas = (props) => {
         ctx.drawImage(qrimg, WIDTH - 160 - 32, 754, 160, 160);
         ctx.restore();
 
-
-
         ctx.setFillStyle('#333333'); //  颜色
         ctx.setFontSize(32);
         let str4 = '长按识别二维码';
@@ -155,7 +158,7 @@ const DrawCanvas = (props) => {
         });
       });
     } catch (error) {
-      console.log("🚀 ~ file: index.jsx:153 ~ wxDrawImage ~ error", error)
+      console.log('🚀 ~ file: index.jsx:153 ~ wxDrawImage ~ error', error);
       Taro.hideLoading();
       Taro.showToast({
         title: '生成图片失败',
@@ -164,17 +167,11 @@ const DrawCanvas = (props) => {
     }
   };
 
-  const start = async () => {
-    // await downLoad();
-    wxDrawImage();
-  };
-
   // 获取微信相册授权信息
   const getSetting = () => {
     return new Promise((resolve, reject) => {
       Taro.getSetting()
         .then((resp) => {
-
           if (process.env.TARO_ENV === 'alipay') {
             if (resp.authSetting['album']) {
               resolve(true);
@@ -307,8 +304,8 @@ const DrawCanvas = (props) => {
     <>
       {isOpened && (
         <Canvas
-          canvasId="shareCanvas"
-          id="shareCanvas"
+          canvasId='shareCanvas'
+          id='shareCanvas'
           width={`${canvasInfo.width}`}
           height={`${canvasInfo.height}`}
           style={{

@@ -1,17 +1,15 @@
-import React, { useState ,useEffect} from 'react';
-import {  Button } from '@tarojs/components';
+import React, { useState, useEffect, memo } from 'react';
+import { Button } from '@tarojs/components';
 import { AtModal, AtModalHeader, AtModalContent, AtModalAction, AtCheckbox } from 'taro-ui';
 
-const ModalSelect = ({ dataSource=[], isOpened, value, onChange,onCancel }) => {
+const ModalSelect = ({ dataSource = [], isOpened, value, onChange, onCancel }) => {
   const [selectList, setselectList] = useState(value || []);
 
   useEffect(() => {
-
-    if(isOpened){
+    if (isOpened) {
       setselectList(value || []);
     }
-
-  }, [isOpened])
+  }, [isOpened]);
 
   const handleSelectChange = (v) => {
     setselectList(v);
@@ -19,13 +17,12 @@ const ModalSelect = ({ dataSource=[], isOpened, value, onChange,onCancel }) => {
 
   const handleOk = () => {
     onChange && onChange(selectList);
-    onCancel && onCancel()
-
+    onCancel && onCancel();
   };
 
   const handleCancel = () => {
     setselectList(value || []);
-    onCancel && onCancel()
+    onCancel && onCancel();
   };
 
   return (
@@ -42,4 +39,4 @@ const ModalSelect = ({ dataSource=[], isOpened, value, onChange,onCancel }) => {
   );
 };
 
-export default ModalSelect;
+export default memo(ModalSelect);

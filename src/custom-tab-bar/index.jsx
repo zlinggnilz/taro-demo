@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Taro from '@tarojs/taro';
 import { CoverView, CoverImage } from '@tarojs/components';
+import useUserStore from '@/store/useUserStore';
 
 import './index.scss';
 
@@ -10,36 +11,35 @@ const list = [
     selectedIconPath: '../assets/tab-icons/home-on.png',
     iconPath: '../assets/tab-icons/home.png',
     text: '首页',
-    code:'home'
+    code: 'home',
   },
   {
     pagePath: '/pages/user/index',
     selectedIconPath: '../assets/tab-icons/user-on.png',
     iconPath: '../assets/tab-icons/user.png',
     text: '个人中心',
-    code:'user'
+    code: 'user',
   },
   {
     pagePath: '/pages/userContent/index',
     selectedIconPath: '../assets/tab-icons/published-on.png',
     iconPath: '../assets/tab-icons/published.png',
     text: '我发布的',
-    code:'published'
+    code: 'published',
   },
   {
     pagePath: '/pages/campaign/index',
     selectedIconPath: '../assets/tab-icons/campaign-on.png',
     iconPath: '../assets/tab-icons/campaign.png',
     text: '活动',
-    code:'campaign'
+    code: 'campaign',
   },
-]
+];
 
-const listCodes = list.reduce((total,item)=>{
+const listCodes = list.reduce((total, item) => {
   total[item.code] = item;
-  return total
-},{})
-
+  return total;
+}, {});
 
 class TabBar extends Component {
   state = {
@@ -49,23 +49,19 @@ class TabBar extends Component {
   };
 
   switchTab = (code) => {
-    // const { isLogin } = this.props.userStore
-
     // this.setSelected(code);
 
-    if(!listCodes[code]){
-      return
+    if (!listCodes[code]) {
+      return;
     }
 
-    const url =  listCodes[code].pagePath
+    const url = listCodes[code].pagePath;
 
-    // if(code === 'published' && !isLogin){
-    //   Taro.navigateTo({ url: `/pages/login/index` });
-
-    // }else{
-
+    if (code === 'published' && !useUserStore.getState().isLogin) {
+      Taro.navigateTo({ url: `/pages/login/index` });
+    } else {
       Taro.switchTab({ url });
-    // }
+    }
   };
 
   setSelected(idx) {
@@ -75,16 +71,16 @@ class TabBar extends Component {
   }
 
   render() {
-    const {  selected, color, selectedColor } = this.state;
+    const { selected, color, selectedColor } = this.state;
 
     return (
-      <CoverView className="tab-bar">
-        <CoverView className="tab-bar-border"></CoverView>
+      <CoverView className='tab-bar'>
+        <CoverView className='tab-bar-border'></CoverView>
         {list.map((item) => {
           return (
             <CoverView
               key={item.code}
-              className="tab-bar-item"
+              className='tab-bar-item'
               onClick={() => {
                 this.switchTab(item.code);
               }}

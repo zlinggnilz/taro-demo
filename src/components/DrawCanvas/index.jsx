@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { View, Image, Canvas } from '@tarojs/components';
-// import { observer, inject } from 'mobx-react';
 import Taro from '@tarojs/taro';
 import qrimg from '@/assets/qr.jpg';
 import ContentImg from '@/assets/where.jpg';
@@ -143,7 +142,7 @@ const DrawCanvas = (props) => {
         ctx.drawImage(qrimg, WIDTH - 160 - 32, 754, 160, 160);
         ctx.restore();
 
-        
+
 
         ctx.setFillStyle('#333333'); //  颜色
         ctx.setFontSize(32);
@@ -166,7 +165,7 @@ const DrawCanvas = (props) => {
   };
 
   const start = async () => {
-    // await downLoad(); 
+    // await downLoad();
     wxDrawImage();
   };
 

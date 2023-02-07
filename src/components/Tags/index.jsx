@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { View, Image } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
+import { useEffect, useMemo } from 'react';
+import { View } from '@tarojs/components';
 import style from './index.module.scss';
 
 const Tags = ({ value = [], dataSource = [] ,onChange}) => {

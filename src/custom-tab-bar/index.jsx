@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import Taro from '@tarojs/taro';
 import { CoverView, CoverImage } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 
 import './index.scss';
 
@@ -41,8 +40,7 @@ const listCodes = list.reduce((total,item)=>{
   return total
 },{})
 
-@inject('userStore')
-@observer
+
 class TabBar extends Component {
   state = {
     selected: 'home',
@@ -51,7 +49,7 @@ class TabBar extends Component {
   };
 
   switchTab = (code) => {
-    const { isLogin } = this.props.userStore
+    // const { isLogin } = this.props.userStore
 
     // this.setSelected(code);
 
@@ -61,17 +59,16 @@ class TabBar extends Component {
 
     const url =  listCodes[code].pagePath
 
-    if(code === 'published' && !isLogin){
-      Taro.navigateTo({ url: `/pages/login/index` });
+    // if(code === 'published' && !isLogin){
+    //   Taro.navigateTo({ url: `/pages/login/index` });
 
-    }else{
+    // }else{
 
       Taro.switchTab({ url });
-    }
+    // }
   };
 
   setSelected(idx) {
-    console.log("🚀 ~ file: index.jsx:60 ~ TabBar ~ setSelected ~ idx", idx)
     this.setState({
       selected: idx,
     });

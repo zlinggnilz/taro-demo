@@ -1,6 +1,5 @@
 import React, { useState ,useEffect} from 'react';
-import { View, Button } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
+import {  Button } from '@tarojs/components';
 import { AtModal, AtModalHeader, AtModalContent, AtModalAction, AtCheckbox } from 'taro-ui';
 
 const ModalSelect = ({ dataSource=[], isOpened, value, onChange,onCancel }) => {

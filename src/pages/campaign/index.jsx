@@ -1,16 +1,19 @@
-import {  useCallback,  createRef,useMemo } from 'react';
+import {  useCallback,  createRef,useMemo,memo } from 'react';
 import { View } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 import Taro, {
   useDidShow,
   usePullDownRefresh,
   useReachBottom,
 } from '@tarojs/taro';
 import ListMore from '@/components/ListMore';
+import shallow from 'zustand/shallow'
+import useCampaignStore from '@/store/useCampaignStore';
 import style from './index.module.scss';
 
-const Campaign = ({ campaignStore }) => {
-  const { list, listState, } = campaignStore;
+const Campaign = ( ) => {
+  const { list, listState,fetchList,listPage } = useCampaignStore(state=>({
+    list:state.list, listState:state.listState,fetchList:state.fetchList,listPage:state.listPage,
+  }),shallow);
 
 
   const listRef = createRef();
@@ -53,8 +56,8 @@ const Campaign = ({ campaignStore }) => {
           renderItem={renderItem}
           state={listState}
           loadingCenter={false}
-          fetchList={campaignStore.fetchList}
-          pageData={campaignStore.listPage}
+          fetchList={fetchList}
+          pageData={listPage}
         />
       </View>
 
@@ -62,4 +65,4 @@ const Campaign = ({ campaignStore }) => {
   );
 };
 
-export default inject('campaignStore')(observer(Campaign));
+export default memo(Campaign);

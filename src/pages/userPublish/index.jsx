@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Textarea, Input, Button } from '@tarojs/components';
+import { useState ,memo} from 'react';
+import { View, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { observer, inject } from 'mobx-react';
 import { AtImagePicker, AtButton } from 'taro-ui';
 import ModalSelect from '@/components/ModalSelect';
 import Tags from '@/components/Tags';
+import useUserStore from '@/store/useUserStore';
+import shallow from 'zustand/shallow'
 import './index.scss';
 
 const tagList = [
@@ -30,8 +31,9 @@ const tagList = [
   { value: 'tag20', label: 'Tag - 20' },
 ];
 
-const User = ({ userStore }) => {
-  const { userInfo } = userStore;
+const Publish = () => {
+  const { userInfo,publish} = useUserStore(state=>({userInfo:state.userInfo,publish: state.publish }),shallow)
+
   const [files, setFiles] = useState([]);
   const [text, setText] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
@@ -85,8 +87,7 @@ const User = ({ userStore }) => {
     // 先上传图片
     // const imgUrl = await uploadImg();
 
-    userStore
-      .publish({
+    publish({
         tagIds: selectedTags.join(','),
         uid: userInfo.uid,
         text: text.trim(),
@@ -154,4 +155,4 @@ const User = ({ userStore }) => {
   );
 };
 
-export default inject('globalStore', 'userStore')(observer(User));
+export default memo(Publish);

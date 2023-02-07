@@ -1,11 +1,10 @@
-import  { useCallback, useState, createRef, useMemo } from 'react';
+import  { useCallback, useState, createRef, useMemo,memo } from 'react';
 import { View, Button, Image,Input } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 import Taro, {
   useShareAppMessage,
   useDidShow,
   usePullDownRefresh,
-  useReachBottom,
+  useReachBottom
 } from '@tarojs/taro';
 import { AtFloatLayout, AtActionSheet, AtActionSheetItem } from 'taro-ui';
 import ListMore from '@/components/ListMore';
@@ -18,13 +17,21 @@ import Feed from '@/components/Feed';
 import Comment from '@/components/Comment';
 // import { feedImg } from '@/constant';
 import ContentImg from '@/assets/where.jpg';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
+import useGlobalStore from '@/store/useGlobalStore';
+import useContentStore from '@/store/useContentStore';
+
 import style from './index.module.scss';
 
-const Index = ({ contentStore, globalStore, userStore }) => {
+const Index = () => {
 
-  const { list, listState, commentList, commentListState } = contentStore;
+  const { list, listState, commentList, commentListState,fetchCommentList ,fetchReplyList,fetchList,listPage,replyCommentReply,replyComment,replyPost} = useContentStore(state=>({list:state.list, listState:state.listState, commentList:state.commentList, commentListState:state.commentListState,fetchCommentList:state.fetchCommentList ,fetchReplyList:state.fetchReplyList,fetchList:state.fetchList, listPage:state.listPage,replyCommentReply:state.replyCommentReply, replyComment:state.replyComment,replyPost:state.replyPost }),shallow);
 
-  const { userInfo } = userStore;
+  const {userInfo,userId} = useUserStore(state=>({userInfo:state.userInfo, userId: state.userId}),shallow)
+
+  const { navHeight,statusBarHeight} = useGlobalStore(state=>({navHeight:state.navHeight,statusBarHeight:state.statusBarHeight}),shallow)
+
 
   const [commentVisible, setCommentVisible] = useState(false);
   const [shareVisible, setShareVisible] = useState(false);
@@ -38,10 +45,10 @@ const Index = ({ contentStore, globalStore, userStore }) => {
 
   const mt = useMemo(() => {
     if (process.env.TARO_ENV === 'alipay') {
-      return globalStore.navHeight + globalStore.statusBarHeight;
+      return navHeight + statusBarHeight;
     }
     if (process.env.TARO_ENV === 'weapp') {
-      return globalStore.navHeight;
+      return navHeight;
     }
   }, []);
 
@@ -54,7 +61,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
   });
 
   // useEffect(() => {
-    // contentStore.fetchList({ start: 1, length: 20 });
+    // fetchList({ start: 1, length: 20 });
     // console.log(globalStore);
     // if (process.env.TARO_ENV === 'alipay') {
     //   my.setNavigationBar({
@@ -79,8 +86,8 @@ const Index = ({ contentStore, globalStore, userStore }) => {
   const handleCommentFetch = (data) => {
     setcurrentFeed(data);
     setCommentVisible(true);
-    const uid = userStore.userId;
-    contentStore.fetchCommentList({
+    const uid = userId;
+    fetchCommentList({
       uid,
       feedId: data.feedId,
       start: 1,
@@ -99,7 +106,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
       toUid: data.fromUid || data.uid,
       feedId: data.feedId,
       commentId: data.commentId,
-      fromUid: userStore.userId,
+      fromUid: userId,
       toReplyId: data.replyId,
       to: data.fromName || data.name,
     });
@@ -123,7 +130,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
   };
 
   const handleReplyMore = (...v) => {
-    return contentStore.fetchReplyList(...v);
+    return fetchReplyList(...v);
   };
 
   const renderComment = (record) => {
@@ -157,7 +164,7 @@ const Index = ({ contentStore, globalStore, userStore }) => {
             className={style.replyMore}
             onClick={() =>
               handleReplyMore({
-                uid: userStore.userId,
+                uid: userId,
                 commentId: record.commentId,
                 start: record.replyList[record.replyList.length - 1],
                 length: 20,
@@ -215,13 +222,13 @@ const Index = ({ contentStore, globalStore, userStore }) => {
     let action;
 
     if (currentComment.toReplyId) {
-      action = contentStore.replyCommentReply;
+      action = replyCommentReply;
       // action = 'replyCommentReply';
     } else if (currentComment.commentId) {
-      action = contentStore.replyComment;
+      action = replyComment;
       // action = 'replyComment';
     } else {
-      action = contentStore.replyPost;
+      action = replyPost;
       // action = 'replyPost';
     }
 
@@ -243,8 +250,8 @@ const Index = ({ contentStore, globalStore, userStore }) => {
           renderItem={renderItem}
           state={listState}
           loadingCenter={false}
-          fetchList={contentStore.fetchList}
-          pageData={contentStore.listPage}
+          fetchList={fetchList}
+          pageData={listPage}
         />
       </View>
       <AtFloatLayout
@@ -297,4 +304,4 @@ const Index = ({ contentStore, globalStore, userStore }) => {
   );
 };
 
-export default inject('contentStore', 'globalStore', 'userStore')(observer(Index));
+export default (Index);

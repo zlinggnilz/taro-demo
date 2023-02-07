@@ -1,6 +1,5 @@
 /* eslint-disable */
-import React, { Component } from 'react';
-import { Provider } from 'mobx-react';
+import { Component } from 'react';
 import Taro from '@tarojs/taro';
 import store from './store';
 
@@ -62,7 +61,7 @@ class App extends Component {
   componentDidCatchError() {}
 
   render() {
-    return <Provider {...store}>{this.props.children}</Provider>;
+    return this.props.children;
   }
 }
 

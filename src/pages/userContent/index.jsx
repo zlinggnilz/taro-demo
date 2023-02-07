@@ -1,20 +1,23 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback,memo } from 'react';
 import { View, Text, Image } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
 import List from '@/components/List';
 import { AtFab } from 'taro-ui';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
 import style from './index.module.scss';
 import './index.scss';
 
-const UserContent = ({ userStore }) => {
-  const { isLogin, userInfo, list, listState } = userStore;
+const UserContent = ( ) => {
+  const { isLogin, userInfo, list, listState,fetchList } = useUserStore(state=>({
+    isLogin:state.isLogin, userInfo:state.userInfo, list:state.list, listState:state.listState,fetchList:state.fetchList
+  }),shallow);
 
   const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
 
   const getList = useCallback(
     (v) =>
-      userStore.fetchList({
+      fetchList({
         uid: userInfo.uid,
         page: v,
         start: v,
@@ -85,4 +88,4 @@ const UserContent = ({ userStore }) => {
   );
 };
 
-export default inject('contentStore', 'userStore')(observer(UserContent));
+export default memo(UserContent);

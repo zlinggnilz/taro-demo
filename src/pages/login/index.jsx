@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
+import { memo } from 'react';
 import { View, Image } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 import Taro, { getCurrentInstance } from '@tarojs/taro';
 import LoginBtn from '@/components/LoginBtn';
 import loginImg from '@/assets/login.png';
 import style from './index.module.scss';
+import useUserStore from '@/store/useUserStore';
 
-const Login = ({ userStore }) => {
-  const { loginState } = userStore;
+const Login = () => {
+  const { loginState } = useUserStore(state=>state.loginState);
 
   const currentInstance = getCurrentInstance();
 
@@ -35,4 +35,4 @@ const Login = ({ userStore }) => {
   );
 };
 
-export default inject('userStore', 'globalStore')(observer(Login));
+export default memo(Login);

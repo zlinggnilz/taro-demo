@@ -1,10 +1,11 @@
+import { memo,useMemo } from 'react';
 import Taro from '@tarojs/taro';
 import { View } from '@tarojs/components';
 import { AtButton } from 'taro-ui';
-import { observer, inject } from 'mobx-react';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
 
 const LoginBtn = ({
-  userStore,
   phoneText = '授权登录',
   infoText = '授权用户信息',
   phoneDesc,
@@ -15,7 +16,16 @@ const LoginBtn = ({
   state,
   btnProps,
 }) => {
-  const { isLogin, isAuthUserInfo } = userStore;
+  const { isLogin, userInfo,login, } = useUserStore(store=>({
+    isLogin:store.isLogin, userInfo:store.userInfo,login:store.login,
+  }),shallow);
+
+  const isAuthUserInfo = useMemo(() => {
+    if (userInfo && Object.keys(userInfo).length > 0) {
+      return true;
+    }
+    return false;
+  }, [userInfo]);
 
   const wxLogin = () => {
     return new Promise((resolve, reject) => {
@@ -46,7 +56,7 @@ const LoginBtn = ({
 
         Taro.checkSession({
           success: async () => {
-            await userStore.login(params);
+            await login(params);
             phoneCallback && phoneCallback();
             Taro.showToast({
               title: '登录成功',
@@ -70,7 +80,7 @@ const LoginBtn = ({
   };
 
   const handleLogin = async () => {
-    await userStore.login({
+    await login({
       code: '1',
       encryptedData: '1',
       iv: '1',
@@ -135,4 +145,4 @@ const LoginBtn = ({
   return <>{children}</>;
 };
 
-export default inject('userStore')(observer(LoginBtn));
+export default memo(LoginBtn);

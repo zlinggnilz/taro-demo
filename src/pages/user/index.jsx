@@ -1,12 +1,15 @@
-import { useMemo } from 'react';
+import { useMemo,memo } from 'react';
 import { View, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
-import { observer, inject } from 'mobx-react';
 import LoginBtn from '@/components/LoginBtn/index';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
 import style from './index.module.scss';
 
-const User = ({ userStore }) => {
-  const { isLogin, userInfo, logout } = userStore;
+const User = ( ) => {
+  const { isLogin, userInfo, logout ,loginState} = useUserStore(state=>({
+    isLogin:state.isLogin, userInfo:state.userInfo, logout:state.logout,loginState:state.loginState
+  }),shallow);
   const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
 
   const toMyFeeds = () => {
@@ -41,7 +44,7 @@ const User = ({ userStore }) => {
               userInfo.name
             ) : (
               <LoginBtn
-                state={userStore.loginState}
+                state={loginState}
                 btnProps={{ size: 'small', className: style.logBtn }}
               />
             )}
@@ -67,4 +70,4 @@ const User = ({ userStore }) => {
   );
 };
 
-export default inject('userStore')(observer(User));
+export default memo(User);

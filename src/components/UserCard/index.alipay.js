@@ -1,11 +1,9 @@
-import React from 'react';
-import { observer, inject } from 'mobx-react';
+import {memo} from 'react';
 import { View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import style from './index.module.scss';
 
-const UserCard = ({ globalStore }) => {
-  const { headerBtnPosi } = globalStore;
+const UserCard = () => {
 
   const handleClick = () => {
     Taro.navigateTo({ url: '/pages/user/index' });
@@ -29,4 +27,4 @@ const UserCard = ({ globalStore }) => {
   );
 };
 
-export default inject('globalStore')(observer(UserCard));
+export default memo(UserCard);

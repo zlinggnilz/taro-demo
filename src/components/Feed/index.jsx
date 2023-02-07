@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import { memo } from 'react';
 import Taro from '@tarojs/taro';
 import { View, Text, Image } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
 import PromiseAction from '@/components/PromiseAction';
-import style from './index.module.scss';
 // import {feedImg} from '@/constant';
 import ContentImg from '@/assets/where.jpg';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
+import useContentStore from '@/store/useContentStore';
+import style from './index.module.scss';
 
 
-const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) => {
-  const { userInfo, isLogin } = userStore;
+const Feed = ({ data,handleCommentFetch,handleShare }) => {
+  const { userInfo, isLogin } = useUserStore(state=>({
+    userInfo:state.userInfo, isLogin:state.isLogin
+  }),shallow);
+
+  const {feedUnLike,feedLike} = useContentStore(state=>({feedUnLike:state.feedUnLike,feedLike:state.feedLike}),shallow)
 
   const handleLike = () => {
     if (!isLogin) {
@@ -21,7 +27,7 @@ const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) 
 
     const params = { feedId: data.feedId, uid: userInfo.uid };
 
-    return data.isLike ? contentStore.feedUnLike(params) : contentStore.feedLike(params);
+    return data.isLike ? feedUnLike(params) : feedLike(params);
   };
 
   const handleComment = ()=>{
@@ -81,4 +87,4 @@ const Feed = ({ data,handleCommentFetch,handleShare, contentStore, userStore }) 
   );
 };
 
-export default inject('contentStore', 'userStore')(observer(Feed));
+export default memo(Feed);

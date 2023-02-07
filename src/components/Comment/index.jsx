@@ -1,22 +1,28 @@
-import React, { useEffect } from 'react';
+import { memo } from 'react';
 import { View, Image, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import PromiseAction from '@/components/PromiseAction';
-import { observer, inject } from 'mobx-react';
 import style from './index.module.scss';
+import useUserStore from '@/store/useUserStore';
+import useContentStore from '@/store/useContentStore';
+import shallow from 'zustand/shallow'
 
 const Comment = ({
   data,
   avatar,
   name,
   children,
-  contentStore,
-  userStore,
   className,
   onClick,
   showAvatar,
 }) => {
-  const { userInfo, isLogin } = userStore;
+  const { userInfo, isLogin } = useUserStore(state=>({
+    userInfo:state.userInfo, isLogin:state.isLogin
+  }),shallow);
+
+  const {commentUnLike, commentLike} = useContentStore(state=>({
+    commentUnLike:state.commentUnLike, commentLike:state.commentLike
+  }),shallow)
 
   const handleLike = () => {
     if (!isLogin) {
@@ -28,7 +34,7 @@ const Comment = ({
 
     const params = { commentId: data.commentId, uid: userInfo.uid, replyId: data.replyId };
 
-    return data.isLike ? contentStore.commentUnLike(params) : contentStore.commentLike(params);
+    return data.isLike ? commentUnLike(params) : commentLike(params);
   };
 
   const handleClick = () => {
@@ -63,4 +69,4 @@ const Comment = ({
   );
 };
 
-export default inject('contentStore', 'userStore')(observer(Comment));
+export default memo(Comment);

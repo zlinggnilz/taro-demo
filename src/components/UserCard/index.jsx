@@ -1,12 +1,16 @@
-import {useMemo} from 'react';
-import { observer, inject } from 'mobx-react';
+import {useMemo,memo} from 'react';
 import { View ,Image} from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import shallow from 'zustand/shallow'
+import useUserStore from '@/store/useUserStore';
+import useGlobalStore from '@/store/useGlobalStore';
 import style from './index.module.scss';
 
-const UserCard = ({ globalStore ,userStore}) => {
-  const { headerBtnPosi } = globalStore;
-  const { isLogin, userInfo } = userStore;
+const UserCard = ( ) => {
+  const { headerBtnPosi } = useGlobalStore(state=>state.headerBtnPosi);
+  const { isLogin, userInfo } = useUserStore(state=>({
+    isLogin:state.isLogin, userInfo:state.userInfo
+  }),shallow);
 
   const pageCtx = useMemo(() => Taro.getCurrentInstance().page, []);
 
@@ -46,4 +50,4 @@ const UserCard = ({ globalStore ,userStore}) => {
   );
 };
 
-export default inject('globalStore', 'userStore')(observer(UserCard));
+export default memo(UserCard);

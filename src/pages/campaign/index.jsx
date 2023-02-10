@@ -1,4 +1,4 @@
-import { useCallback, createRef, useMemo, memo } from 'react';
+import { useCallback, createRef, useMemo } from 'react';
 import { View } from '@tarojs/components';
 import Taro, { useDidShow, usePullDownRefresh, useReachBottom, useLoad } from '@tarojs/taro';
 import ListMore from '@/components/ListMore';
@@ -70,4 +70,4 @@ const Campaign = () => {
   );
 };
 
-export default memo(Campaign);
+export default Campaign;

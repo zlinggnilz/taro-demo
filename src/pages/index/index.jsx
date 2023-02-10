@@ -1,4 +1,4 @@
-import { useCallback, useState, createRef, useMemo, memo } from 'react';
+import { useCallback, useState, createRef, useMemo } from 'react';
 import { View, Button, Image, Input } from '@tarojs/components';
 import Taro, {
   useShareAppMessage,
@@ -334,4 +334,4 @@ const Index = () => {
   );
 };
 
-export default memo(Index);
+export default Index;

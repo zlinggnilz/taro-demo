@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState } from 'react';
 import { View, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { AtImagePicker, AtButton } from 'taro-ui';
@@ -88,6 +88,11 @@ const Publish = () => {
       return;
     }
 
+    if (!selectedTags.length) {
+      Taro.showToast({ title: '请选择标签', icon: 'none' });
+      return;
+    }
+
     setpublishLoading(true);
 
     // 先上传图片
@@ -161,4 +166,4 @@ const Publish = () => {
   );
 };
 
-export default memo(Publish);
+export default Publish;

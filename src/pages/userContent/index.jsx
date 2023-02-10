@@ -1,4 +1,4 @@
-import { useMemo, useCallback, memo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
 import List from '@/components/List';
@@ -70,9 +70,20 @@ const UserContent = () => {
 
   const renderItem = (record, index) => {
     return (
-      <View key={record.feedId} className={`${style.item} flex`}>
-        <View className='flex-box'>{record.text}</View>
-        <Image src={record.imageUrl} className={style.img} />
+      <View className={style.item}>
+        <View key={record.feedId} className='flex'>
+          <View className='flex-box'>
+            {record.text}
+            <View className='mt-4'>
+              {record.tagList.map((item) => (
+                <View key={item.tagId} className='tag'>
+                  {item.name}
+                </View>
+              ))}
+            </View>
+          </View>
+          <Image src={record.imageUrl} className={style.img} />
+        </View>
       </View>
     );
   };
@@ -95,4 +106,4 @@ const UserContent = () => {
   );
 };
 
-export default memo(UserContent);
+export default UserContent;

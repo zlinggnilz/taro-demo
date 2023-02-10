@@ -1,7 +1,6 @@
 import Taro from '@tarojs/taro';
+import { baseUrl } from '@/constant';
 import { formatTime } from './utils';
-
-const baseUrl = 'https://www.fastmock.site/mock/0b4074af2b2246db595b590dc41d824f/sunny';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -81,7 +80,7 @@ const customInterceptor = (chain) => {
 
       if (statusCode === 200) {
         if (code == 0) {
-          return { data: result ,code};
+          return { data: result, code };
         }
 
         return Promise.reject({ code, msg: desc });

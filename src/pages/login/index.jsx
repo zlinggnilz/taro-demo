@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { View, Image } from '@tarojs/components';
 import Taro, { getCurrentInstance } from '@tarojs/taro';
 import LoginBtn from '@/components/LoginBtn';
@@ -35,4 +34,4 @@ const Login = () => {
   );
 };
 
-export default memo(Login);
+export default Login;

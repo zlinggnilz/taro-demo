@@ -1,4 +1,4 @@
-import { useMemo, memo } from 'react';
+import { useMemo } from 'react';
 import { View, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import LoginBtn from '@/components/LoginBtn/index';
@@ -77,4 +77,4 @@ const User = () => {
   );
 };
 
-export default memo(User);
+export default User;
